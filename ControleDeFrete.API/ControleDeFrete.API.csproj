@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.1" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.1">
+	  </PackageReference>
+	  <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.1" />
+	  <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Application\Clientes\Commands\" />
+    <Folder Include="Application\Clientes\Queries\" />
+    <Folder Include="Application\Entregas\Commands\" />
+    <Folder Include="Application\Entregas\Queries\" />
+    <Folder Include="Application\Motoristas\Commands\" />
+    <Folder Include="Application\Motoristas\Queries\" />
+    <Folder Include="Application\Veiculos\Commands\" />
+    <Folder Include="Application\Veiculos\Queries\" />
+    <Folder Include="Application\Fretes\Commands\" />
+    <Folder Include="Application\Fretes\Queries\" />
+    <Folder Include="Application\Handlers\" />
+    <Folder Include="Controllers\Clientes\Commands\" />
+    <Folder Include="Controllers\Clientes\Queries\" />
+    <Folder Include="Controllers\Entregas\Commands\" />
+    <Folder Include="Controllers\Entregas\Queries\" />
+    <Folder Include="Controllers\Fretes\Commands\" />
+    <Folder Include="Controllers\Fretes\" />
+    <Folder Include="Controllers\Fretes\Queries\" />
+    <Folder Include="Controllers\Motoristas\Commands\" />
+    <Folder Include="Controllers\Motoristas\Queries\" />
+    <Folder Include="Controllers\Veiculos\Commands\" />
+    <Folder Include="Controllers\Veiculos\Queries\" />
+    <Folder Include="Domain\Interfaces\Frete\" />
+    <Folder Include="Domain\Interfaces\Motorista\" />
+    <Folder Include="Domain\Interfaces\Cliente\" />
+    <Folder Include="Domain\Interfaces\Entrega\" />
+    <Folder Include="Domain\Interfaces\Veiculo\" />
+    <Folder Include="Infrastructure\Data\Context\" />
+    <Folder Include="Infrastructure\Data\Configurations\" />
+    <Folder Include="Infrastructure\Data\Repositories\" />
+    <Folder Include="Infrastructure\Services\" />
+  </ItemGroup>
+
+</Project>
