@@ -45,11 +45,6 @@
     <Folder Include="Controllers\Motoristas\Queries\" />
     <Folder Include="Controllers\Veiculos\Commands\" />
     <Folder Include="Controllers\Veiculos\Queries\" />
-    <Folder Include="Domain\Interfaces\Frete\" />
-    <Folder Include="Domain\Interfaces\Motorista\" />
-    <Folder Include="Domain\Interfaces\Cliente\" />
-    <Folder Include="Domain\Interfaces\Entrega\" />
-    <Folder Include="Domain\Interfaces\Veiculo\" />
     <Folder Include="Infrastructure\Data\Repositories\" />
     <Folder Include="Infrastructure\Services\" />
   </ItemGroup>
