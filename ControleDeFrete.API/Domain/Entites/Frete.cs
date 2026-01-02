@@ -75,6 +75,53 @@ public sealed class Frete
         }
         return Result.Success();
     }
+    public Result AlterarClienteEntrega(int? clienteId, int seq )
+    {
+
+        if(!IsPendente())
+        {
+            return Result.Failure("Só é permitido alterar o cliente de uma entrega enquanto o frete está pendente.");
+        }
+
+        var entrega = _entregas.FirstOrDefault(e => e.Sequencia == seq);
+        if (entrega is null)
+        {
+            return Result.Failure($"Entrega com sequência {seq} não encontrada para o frete.");
+        }
+        if (clienteId.HasValue && clienteId <= 0)
+            return Result.Failure("ClienteId inválido.");
+        if (clienteId.HasValue)
+        {
+            entrega.AlterarCliente(clienteId.Value);
+        }
+        return Result.Success();
+    }
+    public Result AlterarDestinoEntrega ( Localizacao novoDestino , int seq )
+    {
+        if (!IsPendente())
+        {
+            return Result.Failure( "Só é permitido alterar o cliente de uma entrega enquanto o frete está pendente." );
+        }
+        var entrega = _entregas.FirstOrDefault( e => e.Sequencia == seq );
+        if (entrega is null)
+        {
+            return Result.Failure( $"Entrega com sequência {seq} não encontrada para o frete." );
+        }
+        return entrega.AlterarDestino( novoDestino );
+    }
+    public Result AlterarObservacoesEntrega ( string? obs , int seq )
+    {
+        if (!IsPendente())
+        {
+            return Result.Failure( "Só é permitido alterar o cliente de uma entrega enquanto o frete está pendente." );
+        }
+        var entrega = _entregas.FirstOrDefault( e => e.Sequencia == seq );
+        if (entrega is null)
+        {
+            return Result.Failure( $"Entrega com sequência {seq} não encontrada para o frete." );
+        }
+        return entrega.AlterarObservacoes( obs );
+    }
     public Result RegistrarPagamento ( DateOnly dataPagamento )
     {
         if (!IsFinalizado())
