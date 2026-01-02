@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Infrastructure\Data\Configurations\NovaPasta\**" />
+    <Content Remove="Infrastructure\Data\Configurations\NovaPasta\**" />
+    <EmbeddedResource Remove="Infrastructure\Data\Configurations\NovaPasta\**" />
+    <None Remove="Infrastructure\Data\Configurations\NovaPasta\**" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.1" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.1">
@@ -43,8 +50,6 @@
     <Folder Include="Domain\Interfaces\Cliente\" />
     <Folder Include="Domain\Interfaces\Entrega\" />
     <Folder Include="Domain\Interfaces\Veiculo\" />
-    <Folder Include="Infrastructure\Data\Context\" />
-    <Folder Include="Infrastructure\Data\Configurations\" />
     <Folder Include="Infrastructure\Data\Repositories\" />
     <Folder Include="Infrastructure\Services\" />
   </ItemGroup>

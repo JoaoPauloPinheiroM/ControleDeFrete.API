@@ -1,6 +1,7 @@
 ﻿using ControleDeFrete.API.Application.Common.Result;
 using ControleDeFrete.API.Domain.Enums;
 using ControleDeFrete.API.Domain.ValueObjects;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ControleDeFrete.API.Domain.Entites;
 
@@ -15,8 +16,8 @@ public sealed class Frete
     public Money ValorMotorista { get; private set; }
     public Money ValorTotal => Valor + ValorDescarrego;
 
-    public DateOnly? DataEntrega { get; private set; }
     public DataFato DataEmissao { get; private set; }
+    public DateOnly? DataEntrega { get; private set; }
     public DateOnly? DataCarregamento { get; private set; }
     public DateOnly? DataPagamento { get; private set; }
 
@@ -105,6 +106,60 @@ public sealed class Frete
         this.Status = Status.Pendente;
         return Result.Success();
     }
+    public Result AtualizarValores ( Money novoFreteValor , Money novoDescarrego , Money novoValorMotorista )
+    {
+        if (!IsPendente())
+            return Result.Failure( "Valores só podem ser alterados enquanto o frete está pendente." );
+
+        var res = ValidarValores( novoFreteValor , novoDescarrego , novoValorMotorista );
+        if (res.IsFailure) return res;
+
+        this.Valor = novoFreteValor;
+        this.ValorDescarrego = novoDescarrego;
+        this.ValorMotorista = novoValorMotorista;
+
+        return Result.Success();
+    }
+    public Result AlterarMotorista ( int motoristaId )
+    {
+        if (!IsPendente())
+            return Result.Failure( "Não é permitido trocar motorista após início do trânsito." );
+
+        if (motoristaId <= 0)
+            return Result.Failure( "Motorista inválido." );
+
+        this.MotoristaId = motoristaId;
+        return Result.Success();
+    }
+    public Result AlterarCodigo ( string novoCodigo )
+    {
+        if (!IsPendente())
+            return Result.Failure( "Código só pode ser alterado enquanto o frete está pendente." );
+        if (string.IsNullOrWhiteSpace( novoCodigo ))
+            return Result.Failure( "Código do frete é obrigatório." );
+        this.Codigo = novoCodigo;
+        return Result.Success();
+    }
+    public Result AlterarVeiculo ( int veiculoId )
+    {
+        if (!IsPendente())
+            return Result.Failure( "Não é permitido trocar veículo após início do trânsito." );
+        if (veiculoId <= 0)
+            return Result.Failure( "Veículo inválido." );
+        this.VeiculoId = veiculoId;
+        return Result.Success();
+    }
+
+    //public Result AlterarCliente ( int clienteId )
+    //{
+    //    if (!IsPendente())
+    //        return Result.Failure( "Não é permitido trocar cliente após início do trânsito." );
+    //    if (clienteId <= 0)
+    //        return Result.Failure( "Cliente inválido." );
+    //    this.ClienteId = clienteId;
+    //    return Result.Success();
+    //}
+
     public Result AdicionarEntrega ( int clienteId, string? obs, Localizacao destino )
     {
         if (!IsPendente())
