@@ -13,9 +13,7 @@ public class Cliente
     public TipoPessoa TipoPessoa => Documento.IsCpf ? TipoPessoa.Fisica : TipoPessoa.Juridica;
     public Localizacao Endereco { get; private set; }
     public bool Ativo { get; private set; }
-
     private Cliente() { }
-
     private Cliente (string nome, CpfCnpj documento, Localizacao endereco )
     {
         Nome = nome;
@@ -23,14 +21,12 @@ public class Cliente
         Endereco = endereco;
         Ativo = true;
     }
-
     public static Result<Cliente> Create ( string nome , CpfCnpj documento , Localizacao endereco  )
     {
         if(string.IsNullOrWhiteSpace(nome))
             return Result<Cliente>.Failure("Nome do cliente não pode ser vazio.");
         return Result<Cliente>.Success( new Cliente ( nome , documento , endereco ) );
     }
-
     public Result Inativar ( bool possuiFreteEmCurso )
     {
         if (this.Ativo && possuiFreteEmCurso)
@@ -41,7 +37,6 @@ public class Cliente
 
         return Result.Success();
     }
-
     public Result Ativar ( )
     {
         if (this.Ativo)
@@ -51,12 +46,16 @@ public class Cliente
         Ativo = true;
         return Result.Success();
     }
-
-    public void AtualizarEndereco(Localizacao endereco)
+    public Result AlterarEndereco( bool possuiFreteEmCurso, Localizacao endereco)
     { 
+        if(this.Ativo && possuiFreteEmCurso)
+        {
+            return Result.Failure("O Cliente não pode ter o endereço atualizado enquanto possuir frete em curso.");
+        }
         Endereco = endereco;
+        return Result.Success();
     }
-    public Result AtualizarNome ( string novoNome )
+    public Result AlterarNome ( string novoNome )
     {
         if (string.IsNullOrWhiteSpace( novoNome ))
             return Result.Failure( "O nome do cliente não pode ser vazio." );

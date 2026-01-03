@@ -11,6 +11,5 @@ public interface IMotoristaRepository
     public Task<IEnumerable<Motorista>> ObterTodosAsync ( );
     public Task<Motorista?> ObterDocumentoAsync ( CpfCnpj documento );
     public Task AdicionarAsync ( Motorista motorista );
-    public Task AtualizarAsync ( Motorista motorista );
 
 }

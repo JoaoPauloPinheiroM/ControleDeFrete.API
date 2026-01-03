@@ -196,7 +196,7 @@ public sealed class Frete
         this.VeiculoId = veiculoId;
         return Result.Success();
     }
-
+    public bool PodeSerRemovido ( ) => IsPendente() || IsCancelado();
     //public Result AlterarCliente ( int clienteId )
     //{
     //    if (!IsPendente())
