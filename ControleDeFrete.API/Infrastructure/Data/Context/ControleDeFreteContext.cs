@@ -7,10 +7,11 @@ public class ControleDeFreteContext : DbContext
 {
     public ControleDeFreteContext ( DbContextOptions<ControleDeFreteContext> options ) : base( options ) { }
 
-    DbSet<Frete> Fretes => Set<Frete>();
-    DbSet<Motorista> Motoristas => Set<Motorista>();
-    DbSet<Veiculo> Veiculos => Set<Veiculo>();
-    DbSet<Cliente> Clientes => Set<Cliente>();
+    public DbSet<Frete> Fretes => Set<Frete>();
+    public DbSet<Motorista> Motoristas => Set<Motorista>();
+    public DbSet<Veiculo> Veiculos => Set<Veiculo>();
+    public DbSet<Cliente> Clientes => Set<Cliente>();
+
     protected override void OnModelCreating ( ModelBuilder modelBuilder )
     {
         base.OnModelCreating( modelBuilder );

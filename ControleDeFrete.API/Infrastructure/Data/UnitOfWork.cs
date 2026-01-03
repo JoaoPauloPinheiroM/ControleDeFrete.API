@@ -1,6 +1,7 @@
 ﻿using ControleDeFrete.API.Domain.Interfaces;
+using ControleDeFrete.API.Infrastructure.Data.Context;
 
-namespace ControleDeFrete.API.Infrastructure.Data.Context;
+namespace ControleDeFrete.API.Infrastructure.Data;
 
 public class UnitOfWork : IUnitOfWork
 {
