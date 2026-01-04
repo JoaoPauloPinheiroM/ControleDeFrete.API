@@ -1,5 +1,6 @@
 ﻿using ControleDeFrete.API.Domain.Entites;
 using ControleDeFrete.API.Domain.Interfaces;
+using ControleDeFrete.API.Domain.ValueObjects;
 using ControleDeFrete.API.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,24 +13,24 @@ public class ClienteRepository : IClienteRepository
     {
         _context = context;
     }
-    public async Task Adicionar ( Cliente cliente )
+    public async Task AdicionarAsync ( Cliente cliente )
     {
         await _context.Clientes.AddAsync( cliente );
     }
 
-    public async Task<IEnumerable<Cliente>> ObterClientes ( )
+    public async Task<IEnumerable<Cliente>> ObterClientesAsync ( )
     {
         return await _context.Clientes.AsNoTracking().ToListAsync();
 
     }
 
-    public async Task<Cliente?> ObterPorDocumento ( string documento )
+    public async Task<Cliente?> ObterPorDocumentoAsync ( CpfCnpj documento )
     {
         return await _context.Clientes
-            .FirstOrDefaultAsync( c => c.Documento.Numero == documento );
+            .FirstOrDefaultAsync( c => c.Documento.Numero == documento.Numero );
     }
 
-    public async Task<Cliente?> ObterPorId ( int id )
+    public async Task<Cliente?> ObterPorIdAsync ( int id )
     {
         return await _context.Clientes.FindAsync( id );
     }

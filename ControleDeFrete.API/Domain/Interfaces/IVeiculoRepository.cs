@@ -4,8 +4,8 @@ namespace ControleDeFrete.API.Domain.Interfaces;
 
 public interface IVeiculoRepository
 {
-    public Task<Veiculo?> ObterPorId ( int id );
-    public Task<Veiculo?> ObterPorPlaca ( string placa );
-    public Task<IEnumerable<Veiculo>> ObterVeiculos();
-    public Task Adicionar ( Veiculo veiculo );
+    public Task<Veiculo?> ObterPorIdAsync ( int id );
+    public Task<Veiculo?> ObterPorPlacaAsync ( string placa );
+    public Task<IEnumerable<Veiculo>> ObterVeiculosAsync();
+    public Task AdicionarAsync ( Veiculo veiculo );
 }

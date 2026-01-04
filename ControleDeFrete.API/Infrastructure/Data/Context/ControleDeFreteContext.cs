@@ -5,7 +5,10 @@ namespace ControleDeFrete.API.Infrastructure.Data.Context;
 
 public class ControleDeFreteContext : DbContext
 {
-    public ControleDeFreteContext ( DbContextOptions<ControleDeFreteContext> options ) : base( options ) { }
+    public ControleDeFreteContext ( DbContextOptions<ControleDeFreteContext> options )
+        : base( options )
+    {
+    }
 
     public DbSet<Frete> Fretes => Set<Frete>();
     public DbSet<Motorista> Motoristas => Set<Motorista>();

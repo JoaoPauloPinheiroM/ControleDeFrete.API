@@ -12,7 +12,7 @@ public class Entrega
     public bool Entregue { get; private set; }
     public string Observacoes { get; private set; } = string.Empty;
     public Localizacao Destino { get; private set; }
-    public DateOnly DataEntrega { get; private set; }
+    public DateOnly? DataEntrega { get; private set; }
 
     internal void MarcarEntregue ( DateOnly dataEntrega )
     {
@@ -27,7 +27,7 @@ public class Entrega
         FreteId = freteId;
         ClienteId = clienteId;
         this.Sequencia = Sequencia;
-        Observacoes = obs;
+        Observacoes = obs ?? string.Empty;
         Destino = destino;
         Entregue = false;
     }
@@ -56,7 +56,6 @@ public class Entrega
         return Result.Success();
 
     }
-
     public Result AlterarDestino ( Localizacao novoDestino )
     {
         if (Entregue)

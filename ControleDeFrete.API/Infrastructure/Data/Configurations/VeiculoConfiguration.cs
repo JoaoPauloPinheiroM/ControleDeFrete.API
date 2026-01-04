@@ -18,7 +18,6 @@ public class VeiculoConfiguration : IEntityTypeConfiguration<Veiculo>
              .HasMaxLength( 7 )
              .IsFixedLength();
         } );
-
         builder.Property( v => v.Modelo ).IsRequired().HasMaxLength( 100 );
         builder.Property( v => v.Marca ).IsRequired().HasMaxLength( 50 );
         builder.Property( v => v.AnoFabricacao ).IsRequired();

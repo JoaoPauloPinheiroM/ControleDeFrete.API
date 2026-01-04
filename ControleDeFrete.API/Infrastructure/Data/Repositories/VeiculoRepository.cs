@@ -13,23 +13,23 @@ public class VeiculoRepository : IVeiculoRepository
     {
         _context = context;
     }
-    public async Task Adicionar ( Veiculo veiculo )
+    public async Task AdicionarAsync ( Veiculo veiculo )
     {
         await _context.Veiculos.AddAsync(veiculo);
     }
 
-    public async Task<Veiculo?> ObterPorId ( int id )
+    public async Task<Veiculo?> ObterPorIdAsync ( int id )
     {
         return await _context.Veiculos.AsNoTracking().FirstOrDefaultAsync( v => v.Id == id);
     }
 
-    public async Task<Veiculo?> ObterPorPlaca ( string placa )
+    public async Task<Veiculo?> ObterPorPlacaAsync ( string placa )
     {
         return await _context.Veiculos.AsNoTracking()
             .FirstOrDefaultAsync( v => v.Placa.Valor == placa);
     }
 
-    public async Task<IEnumerable<Veiculo>> ObterVeiculos ( )
+    public async Task<IEnumerable<Veiculo>> ObterVeiculosAsync ( )
     {
         return await _context.Veiculos.AsNoTracking().ToListAsync();
     }

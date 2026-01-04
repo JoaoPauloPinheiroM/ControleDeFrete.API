@@ -23,6 +23,8 @@ public class EntregaConfiguration : IEntityTypeConfiguration<Entrega>
             l.Property( x => x.Logradouro ).HasColumnName( "Destino_Logradouro" );
             l.Property( x => x.Cidade ).HasColumnName( "Destino_Cidade" );
             l.Property( x => x.Estado ).HasColumnName( "Destino_Estado" );
+            l.Property( x => x.Latitude ).HasColumnName( "Destino_Latitude" );
+            l.Property( x => x.Longitude ).HasColumnName( "Destino_Longitude" );
         } );
 
         // Configuração explícita da FK

@@ -2,24 +2,25 @@
 
 namespace ControleDeFrete.API.Domain.ValueObjects;
 
-public readonly struct Localizacao
+public sealed class Localizacao
 {
     public string Logradouro { get; }
     public string Cidade { get; }
     public string Estado { get; }
-    public double Latitude { get; }
-    public double Longitude { get; }
+    public double? Latitude { get; }
+    public double? Longitude { get; }
 
-    private Localizacao ( string lodagouro , string cidade , string estado , double latitude , double longitude )
+    private Localizacao ( string logradouro , string cidade , string estado , double? latitude , double? longitude )
     {
-        Logradouro = lodagouro;
+        Logradouro = logradouro;
         Cidade = cidade;
         Estado = estado;
         Latitude = latitude;
         Longitude = longitude;
+    
     }
 
-    public static Result<Localizacao> Create ( string logradouro , string cidade , string estado , double lat , double lon )
+    public static Result<Localizacao> Create ( string logradouro , string cidade , string estado , double? latitude , double? longitude )
     {
         if (string.IsNullOrWhiteSpace( logradouro )) return "Logradouro é obrigatório."; 
         if (string.IsNullOrWhiteSpace( cidade )) return "Cidade é obrigatória."; 
@@ -30,10 +31,10 @@ public readonly struct Localizacao
             return Result<Localizacao>.Failure( "Estado deve conter exatamente 2 caracteres." );
 
         //30-12-2025: joão.mourao -  Validação técnica de coordenadas
-        if (lat < -90 || lat > 90) return "Latitude inválida."; 
-        if (lon < -180 || lon > 180) return "Longitude inválida."; 
+        if (latitude < -90 || latitude > 90) return "Latitude inválida."; 
+        if (longitude < -180 || longitude > 180) return "Longitude inválida."; 
 
-        return Result<Localizacao>.Success( new Localizacao( logradouro , cidade , estadoNormalizado! , lat , lon ) ); 
+        return Result<Localizacao>.Success( new Localizacao( logradouro , cidade , estadoNormalizado! , latitude , longitude ) ); 
     }
 
     

@@ -20,9 +20,9 @@ public readonly struct CpfCnpj
     public bool IsCpf => _value.Length == 11;
     public bool IsCnpj => _value.Length == 14;
 
-    private CpfCnpj ( string value )
+    private CpfCnpj ( string numero )
     {
-        _value = value;
+        _value = numero;
         _isInitialized = true;
     }
 

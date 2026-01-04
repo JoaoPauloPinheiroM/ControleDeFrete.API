@@ -10,5 +10,6 @@ public interface IFreteRepository
     public Task AdicionarAsync ( Frete frete );
     public Task<bool> RemoverFreteAsync ( Frete frete );
     public Task<bool> MotoristaPossuiFreteAtivoAsync ( int motoristaId );
+    public Task<bool> VeiculoPossuiFreteAtivoAsync ( int veiculoId );
 
 }

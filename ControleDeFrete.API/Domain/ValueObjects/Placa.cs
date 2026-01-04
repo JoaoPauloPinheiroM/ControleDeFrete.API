@@ -14,9 +14,9 @@ public readonly struct Placa
             return _value;
         }
     }
-    private Placa ( string value )
+    private Placa ( string valor )
     {
-        _value = value;
+        _value = valor;
         _isInitialized = true;
     }
     public static Result<Placa> Create ( string placa )

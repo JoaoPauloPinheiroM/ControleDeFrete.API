@@ -3,7 +3,7 @@ using ControleDeFrete.API.Infrastructure.Data.Context;
 
 namespace ControleDeFrete.API.Infrastructure.Data;
 
-public class UnitOfWork : IUnitOfWork
+public sealed class UnitOfWork : IUnitOfWork
 {
     private readonly ControleDeFreteContext _context;
 

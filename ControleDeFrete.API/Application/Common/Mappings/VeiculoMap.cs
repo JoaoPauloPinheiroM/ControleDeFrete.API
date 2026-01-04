@@ -1,5 +1,19 @@
-﻿namespace ControleDeFrete.API.Application.Common.Mappings;
+﻿using ControleDeFrete.API.Application.Common.DTOS.Responses.Veiculos;
+using ControleDeFrete.API.Domain.Entites;
 
-public class VeiculoMap
+namespace ControleDeFrete.API.Application.Common.Mappings;
+
+public static class VeiculoMap
 {
+    public static DetalhesVeiculoResponse ToResponse( this Veiculo veiculo)
+    {
+        return new DetalhesVeiculoResponse
+        (
+            veiculo.Placa,
+            veiculo.Modelo,
+            veiculo.Marca,
+            veiculo.AnoFabricacao,
+            veiculo.Ativo
+        );
+    }
 }

@@ -14,29 +14,20 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.1" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.1">
-	  </PackageReference>
-	  <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.1" />
-	  <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+	<PackageReference Include="NSwag.AspNetCore" Version="14.2.0" />
+
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="APIControllers\" />
-    <Folder Include="Application\Clientes\Handlers\" />
-    <Folder Include="Application\Fretes\Handlers\" />
-    <Folder Include="Application\Clientes\Commands\" />
-    <Folder Include="Application\Clientes\Queries\" />
-    <Folder Include="Application\Fretes\Commands\" />
-    <Folder Include="Application\Fretes\" />
-    <Folder Include="Application\Fretes\Queries\" />
-    <Folder Include="Application\Motoristas\Commands\" />
-    <Folder Include="Application\Motoristas\Handlers\" />
-    <Folder Include="Application\Motoristas\Queries\" />
-    <Folder Include="Application\Veiculos\Commands\" />
-    <Folder Include="Application\Veiculos\Handlers\" />
-    <Folder Include="Application\Veiculos\Queries\" />
+    <Folder Include="Application\Services\Read\" />
     <Folder Include="Infrastructure\Services\" />
   </ItemGroup>
 

@@ -15,19 +15,19 @@ public class FreteRepository : IFreteRepository
     }
     public async Task AdicionarAsync ( Frete frete )
     {
-        await _context.Fretes.AddAsync ( frete );   
+        await _context.Fretes.AddAsync( frete );
     }
 
     public async Task<Frete?> ObterFretePorCodigoAsync ( string codigo )
     {
-       return await _context.Fretes.Include( f => f.Entregas )
-            .FirstOrDefaultAsync ( f => f.Codigo == codigo );
+        return await _context.Fretes.Include( f => f.Entregas )
+             .FirstOrDefaultAsync( f => f.Codigo == codigo );
     }
 
     public async Task<Frete?> ObterPorIdAsync ( int freteId )
     {
         return await _context.Fretes.Include( f => f.Entregas )
-            .FirstOrDefaultAsync ( f => f.Id == freteId );
+            .FirstOrDefaultAsync( f => f.Id == freteId );
     }
 
 
@@ -37,14 +37,14 @@ public class FreteRepository : IFreteRepository
             .AsNoTracking()
             .Include( f => f.Entregas )
             .ToListAsync();
-          
+
     }
 
-    public async  Task<bool> RemoverFreteAsync ( Frete frete )
+    public async Task<bool> RemoverFreteAsync ( Frete frete )
     {
-        if(frete.PodeSerRemovido())
+        if (frete.PodeSerRemovido())
         {
-             _context.Fretes.Remove ( frete );
+            _context.Fretes.Remove( frete );
             return true;
         }
         return false;
@@ -52,9 +52,15 @@ public class FreteRepository : IFreteRepository
     }
     public async Task<bool> MotoristaPossuiFreteAtivoAsync ( int motoristaId )
     {
-        
+
         return await _context.Fretes
             .AnyAsync( f => f.MotoristaId == motoristaId &&
+                          (f.Status == Status.Pendente || f.Status == Status.EmTransito) );
+    }
+    public async Task<bool> VeiculoPossuiFreteAtivoAsync ( int veiculoId )
+    {
+        return await _context.Fretes
+            .AnyAsync( f => f.VeiculoId == veiculoId &&
                           (f.Status == Status.Pendente || f.Status == Status.EmTransito) );
     }
 }

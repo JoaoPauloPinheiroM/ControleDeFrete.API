@@ -19,11 +19,18 @@ public class FreteConfiguration : IEntityTypeConfiguration<Frete>
             .HasMaxLength( 20 );
 
         // Joao.mourao 01-01-2026: Mapeamento dos VOs como complexas 
-        builder.ComplexProperty( f => f.Valor );
-        builder.ComplexProperty( f => f.ValorDescarrego );
-        builder.ComplexProperty( f => f.ValorMotorista );
-        builder.ComplexProperty( f => f.ValorTotal );
-        builder.ComplexProperty( f => f.Origem );
+        builder.Property( f => f.Valor ).HasConversion( v => v.Valor , v => Money.From( v ) );
+        builder.Property( f => f.ValorDescarrego ).HasConversion( v => v.Valor , v => Money.From( v ) );
+        builder.Property( f => f.ValorMotorista ).HasConversion( v => v.Valor , v => Money.From( v ) );
+        builder.Ignore( f => f.ValorTotal );
+        builder.ComplexProperty( f => f.Origem , l =>
+        {
+            l.Property( x => x.Logradouro ).HasColumnName( "Origem_Logradouro" ).HasMaxLength( 200 );
+            l.Property( x => x.Cidade ).HasColumnName( "Origem_Cidade" ).HasMaxLength( 100 );
+            l.Property( x => x.Estado ).HasColumnName( "Origem_Estado" ).HasMaxLength( 2 );
+            l.Property( x => x.Latitude ).HasColumnName( "Origem_Latitude" );
+            l.Property( x => x.Longitude ).HasColumnName( "Origem_Longitude" );
+        } );
 
 
         // Joao.mourao 01-01-2026: Conversao das datas para DateOnly
