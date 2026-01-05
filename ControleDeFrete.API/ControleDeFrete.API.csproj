@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Infrastructure\Data\Configurations\NovaPasta\**" />
-    <Content Remove="Infrastructure\Data\Configurations\NovaPasta\**" />
-    <EmbeddedResource Remove="Infrastructure\Data\Configurations\NovaPasta\**" />
-    <None Remove="Infrastructure\Data\Configurations\NovaPasta\**" />
+    <Compile Remove="Infrastructure\**" />
+    <Content Remove="Infrastructure\**" />
+    <EmbeddedResource Remove="Infrastructure\**" />
+    <None Remove="Infrastructure\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,8 +27,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Services\Read\" />
-    <Folder Include="Infrastructure\Services\" />
+    <Folder Include="Controllers\ClienteEndpoints\" />
+    <Folder Include="Controllers\MotoristaEndpoints\" />
+    <Folder Include="Controllers\VeiculoEndpoints\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ControleDeFrete.Application\ControleDeFrete.Application.csproj" />
+    <ProjectReference Include="..\ControleDeFrete.Domain\ControleDeFrete.Domain.csproj" />
+    <ProjectReference Include="..\ControleDeFrete.Infrastructure\ControleDeFrete.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

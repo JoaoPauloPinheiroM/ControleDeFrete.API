@@ -1,9 +1,6 @@
-
-using ControleDeFrete.API.Application.Services;
-using ControleDeFrete.API.Domain.Interfaces;
-using ControleDeFrete.API.Infrastructure;
+using ControleDeFrete.API.Application.Services.Write;
 using Microsoft.EntityFrameworkCore;
-
+using ControleDeFrete.Infrastructure;
 var builder = WebApplication.CreateBuilder( args );
 
 // Add services to the container.
@@ -13,8 +10,9 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddOpenApiDocument();
 builder.Services.AddInfrastructureServices( builder.Configuration );
-builder.Services.AddDomainInterfaces();
-builder.Services.AddApplicationServices();
+builder.Services.AddScoped<FreteWriteAppServices>();
+builder.Services.AddScoped<MotoristaWriteAppServices>();
+builder.Services.AddScoped<VeiculoWriteAppServices>();
 
 var app = builder.Build();
 
@@ -35,3 +33,9 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+
+
+
+
