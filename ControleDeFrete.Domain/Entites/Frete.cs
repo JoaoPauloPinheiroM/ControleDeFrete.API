@@ -1,6 +1,7 @@
 ﻿using ControleDeFrete.Domain.Common;
 using ControleDeFrete.Domain.Enums;
 using ControleDeFrete.Domain.ValueObjects;
+using System.Text;
 
 namespace ControleDeFrete.Domain.Entites;
 
@@ -39,29 +40,54 @@ public sealed class Frete
 
 
 
-    public Result IniciarTransito ( DateOnly dataInicio, int motoristaId, int veiculoId)
+    public Result IniciarTransito ( DateOnly dataInicio)
     {
-
-        if (!IsPendente())
+        if(!IsPendente())
         {
-            return Result.Failure( "Somente fretes pendentes podem ser iniciados." );
+            return Result.Failure("Só é permitido iniciar o trânsito de fretes pendentes.");
         }
-        this.MotoristaId = motoristaId;
-        this.VeiculoId = veiculoId;
+        if ( !MotoristaId.HasValue || !VeiculoId.HasValue)
+        {
+            return Result.Failure( "Frete sem Motorista ou Veiculo" );
+        }
         this.Status = Status.EmTransito;
+        var resultado = ValidarCronologia( DataEmissao,null ,dataInicio, null );
+        if (resultado.IsFailure) return resultado;
         this.DataCarregamento = dataInicio;
         return Result.Success();
     }
-    public Result FinalizarEntrega ( DateOnly dataEntrega , Entrega entrega )
+
+    public Result AtribuirMotorista (int idMotorista )
+    {
+        if (!IsPendente())
+        {
+            return Result.Failure("Só é permitido alterar o motorista enquanto o frete está pendente.");
+        }
+        this.MotoristaId = idMotorista;
+        return Result.Success();
+    }
+
+    public Result AtribuirVeiculo (int idVeiculo )
+    {
+        if (!IsPendente())
+        {
+            return Result.Failure("Só é permitido alterar o veículo enquanto o frete está pendente.");
+        }
+        this.VeiculoId = idVeiculo;
+        return Result.Success();
+    }
+
+    public Result FinalizarEntrega ( DateOnly dataEntrega , int seq )
     {
         if (!EmTransito())
         {
             return Result.Failure( "Somente fretes em trânsito podem marcar suas entregas concluídas." );
         }
-
-        var resData = ValidarCronologia( this.DataEmissao.Valor , dataEntrega , this.DataCarregamento , null );
-        if (resData.IsFailure) return resData;
-
+        var entrega = _entregas.FirstOrDefault( e => e.Sequencia == seq );
+        if (entrega == null)
+            {
+            return Result.Failure( $"Entrega com sequência {seq} não encontrada para o frete." );
+        }
         entrega.MarcarEntregue( dataEntrega );
 
         if (_entregas.All( e => e.Entregue ))
@@ -71,6 +97,7 @@ public sealed class Frete
         }
         return Result.Success();
     }
+
     public Result AlterarDataEmissao ( DataFato novaDataEmissao )
     {
         if (!IsPendente())
@@ -80,6 +107,7 @@ public sealed class Frete
         this.DataEmissao = novaDataEmissao;
         return Result.Success();
     }
+
     public Result AlterarDestinoEntrega ( Localizacao novoDestino , int seq )
     {
         if (!IsPendente())
@@ -93,6 +121,7 @@ public sealed class Frete
         }
         return entrega.AlterarDestino( novoDestino );
     }
+
     public Result AlterarOrigem ( Localizacao novaOrigem )
     {
         if (!IsPendente())
@@ -100,6 +129,7 @@ public sealed class Frete
         this.Origem = novaOrigem;
         return Result.Success();
     }
+
     public Result AlterarObservacoesEntrega ( string? obs , int seq )
     {
         if (!IsPendente())
@@ -113,6 +143,7 @@ public sealed class Frete
         }
         return entrega.AlterarObservacoes( obs );
     }
+
     public Result AlterarCodigo ( string novoCodigo )
     {
         if (!IsPendente())
@@ -122,6 +153,7 @@ public sealed class Frete
         this.Codigo = novoCodigo;
         return Result.Success();
     }
+
     public Result AlterarClienteEntrega(int? clienteId, int seq )
     {
 
@@ -143,6 +175,7 @@ public sealed class Frete
         }
         return Result.Success();
     }
+
     public Result AlterarClienteOrigem ( int clienteId )
     {
         if (!IsPendente())

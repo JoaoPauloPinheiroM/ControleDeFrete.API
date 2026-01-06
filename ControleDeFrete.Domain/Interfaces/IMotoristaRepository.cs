@@ -8,7 +8,7 @@ public interface IMotoristaRepository
 {
     public Task<Motorista?> ObterPorIdAsync ( int motoristaId );
     public Task<IEnumerable<Motorista>> ObterTodosAsync ( );
-    public Task<Motorista?> ObterDocumentoAsync ( CpfCnpj documento );
+    public Task<Motorista?> ObterPorcumentoAsync ( string documento );
     public Task AdicionarAsync ( Motorista motorista );
 
 }

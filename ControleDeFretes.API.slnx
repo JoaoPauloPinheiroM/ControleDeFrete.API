@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/01-Core/">
+    <Project Path="ControleDeFrete.Domain/ControleDeFrete.Domain.csproj" Id="95b03d91-72e0-46b8-8793-f743f01f1092" />
+  </Folder>
+  <Folder Name="/02-Bussines/">
+    <Project Path="ControleDeFrete.Application/ControleDeFrete.Application.csproj" Id="5eb266a4-e9d5-4622-a489-c91f54e54a6b" />
+  </Folder>
+  <Folder Name="/03-Shared/">
+    <Project Path="ControleDeFrete.Infrastructure/ControleDeFrete.Infrastructure.csproj" Id="b4d4b8a0-3aef-4455-99d4-63feddf56437" />
+  </Folder>
+  <Folder Name="/04-UI/">
+    <Project Path="ControleDeFrete.API/ControleDeFrete.API.csproj" />
+  </Folder>
+</Solution>

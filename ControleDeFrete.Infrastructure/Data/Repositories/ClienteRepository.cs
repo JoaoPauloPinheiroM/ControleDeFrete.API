@@ -24,10 +24,10 @@ public class ClienteRepository : IClienteRepository
 
     }
 
-    public async Task<Cliente?> ObterPorDocumentoAsync ( CpfCnpj documento )
+    public async Task<Cliente?> ObterPorDocumentoAsync ( string documento )
     {
         return await _context.Clientes
-            .FirstOrDefaultAsync( c => c.Documento.Numero == documento.Numero );
+            .FirstOrDefaultAsync( c => c.Documento.Numero == documento );
     }
 
     public async Task<Cliente?> ObterPorIdAsync ( int id )

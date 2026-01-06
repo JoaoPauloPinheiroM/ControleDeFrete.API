@@ -9,7 +9,7 @@ namespace ControleDeFrete.API.APIControllers.FreteEndpoints;
 public class AdicionarEntregaController ( FreteWriteAppServices freteService ) : ControllerBase
 {
     [HttpPost( "{codigo}" )]
-    public async Task<IActionResult> AddEntrega ( string codigoFrete , AddEntregaFreteRequest request )
+    public async Task<IActionResult> AddEntrega ( string codigoFrete , CreateEntregaFreteRequest request )
     {
 
         var result = await freteService.AdicionarEntrega( codigoFrete , request );

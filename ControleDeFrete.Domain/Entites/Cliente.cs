@@ -22,7 +22,9 @@ public class Cliente
     }
     public static Result<Cliente> Create ( string nome , CpfCnpj documento , Localizacao endereco )
     {
-        if (string.IsNullOrWhiteSpace( nome ))
+        if(nome is null ||  (nome.Length > 250 || nome.Length < 3))
+            return Result<Cliente>.Failure( "Nome do cliente inválido. Deve conter entre 3 e 250 caracteres." );
+        if (string.IsNullOrWhiteSpace( nome ) )
             return Result<Cliente>.Failure( "Nome do cliente não pode ser vazio." );
         return Result<Cliente>.Success( new Cliente( nome , documento , endereco ) );
     }

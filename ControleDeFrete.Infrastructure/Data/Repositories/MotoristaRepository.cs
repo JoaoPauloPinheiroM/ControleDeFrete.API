@@ -18,10 +18,10 @@ public class MotoristaRepository : IMotoristaRepository
         await _context.Motoristas.AddAsync( motorista );
     }
 
-    public async Task<Motorista?> ObterDocumentoAsync ( CpfCnpj documento )
+    public async Task<Motorista?> ObterPorcumentoAsync ( string documento )
     {
         return await _context.Motoristas.AsNoTracking()
-            .FirstOrDefaultAsync( m => m.Documento.Numero == documento.Numero );
+            .FirstOrDefaultAsync( m => m.Documento.Numero == documento );
     }
 
     public async Task<Motorista?> ObterPorIdAsync ( int motoristaId )

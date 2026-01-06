@@ -14,22 +14,7 @@
 
   <ItemGroup>
     <Compile Remove="Class1.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UseCases\Clientes\" />
-    <Folder Include="UseCases\Fretes\AlocarMotoristsaNoFrete\" />
-    <Folder Include="UseCases\Fretes\AlocarVeiculoNoFrete\" />
-    <Folder Include="UseCases\Fretes\CancelarFrete\" />
-    <Folder Include="UseCases\Fretes\CriarFrete\" />
-    <Folder Include="UseCases\Fretes\FinalizarFrete\" />
-    <Folder Include="UseCases\Fretes\IniciarTransitoFrete\" />
-    <Folder Include="UseCases\Motoristas\ConsultarDadosMotorista\" />
-    <Folder Include="UseCases\Motoristas\ConsultarMotoristaDisponivel\" />
-    <Folder Include="UseCases\Motoristas\CriarMotorista\" />
-    <Folder Include="UseCases\Motoristas\MudarStatusDoMotorista\" />
-    <Folder Include="UseCases\Veiculos\ConsultarDadosVeiculo\" />
-    <Folder Include="UseCases\Veiculos\CriarVeiculo\" />
+    <Compile Remove="Common\DTOS\Responses\Fretes\DetalhesEntregaFreteResponse.cs" />
   </ItemGroup>
 
   <ItemGroup>

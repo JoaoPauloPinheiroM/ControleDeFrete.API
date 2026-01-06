@@ -16,5 +16,4 @@ public record DetalhesFreteResponse
     string VeiculoPlaca ,
     string Origem ,
     string Destinos
-
 );

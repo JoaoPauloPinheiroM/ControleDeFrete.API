@@ -1,6 +1,6 @@
 ﻿namespace ControleDeFrete.API.Application.Common.DTOS.Requests.Fretes;
 
-public record AddEntregaFreteRequest 
+public record CreateEntregaFreteRequest 
     (
         string DocumentoCliente,
         string Logradouro ,
