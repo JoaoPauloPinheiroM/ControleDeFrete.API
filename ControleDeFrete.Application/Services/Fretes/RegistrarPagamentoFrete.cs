@@ -15,7 +15,7 @@ public class RegistrarPagamentoFrete : IRegistrarPagamentoFrete
     }
     public async  Task<Result> ExecuteAsync ( string  codigo , DateOnly dataPagamento )
     {
-        var frete = await _freteRepository.ObterFretePorCodigoAsync ( codigo );
+        var frete = await _freteRepository.GetByCodigoAsync ( codigo );
         if (frete is null)
             return Result.Failure ( "Frete não encontrado." );
         var resultado = frete.RegistrarPagamento ( dataPagamento );

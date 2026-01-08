@@ -4,13 +4,10 @@ using ControleDeFrete.Application.Interfaces.Fretes;
 using ControleDeFrete.Domain.Entites;
 using ControleDeFrete.Domain.Interfaces;
 using ControleDeFrete.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ControleDeFrete.Application.Services.Fretes;
 
-public  class CriarFrete : ICriarFrete
+public class CriarFrete : ICriarFrete
 {
     private readonly IFreteRepository _freteRepository;
     private readonly IClienteRepository _clienteRepository;
@@ -24,10 +21,10 @@ public  class CriarFrete : ICriarFrete
         _validator = validator;
     }
 
-    public async  Task<Result> ExecuteAsync ( CreateFreteRequest frete )
+    public async Task<Result> ExecuteAsync ( CreateFreteRequest frete )
     {
         var freteExistente = await _validator.ExistsFreteAsync( frete.Codigo );
-        if(freteExistente)
+        if (freteExistente)
             return Result.Failure( "Já existe um frete com esse código." );
 
         var documentoClienteResult = CpfCnpj.Create( frete.DocumentoCliente );
@@ -62,7 +59,7 @@ public  class CriarFrete : ICriarFrete
         var freteResponse = Frete.Create( frete.Codigo , valorFreteResult.Value! , valorDescarregoResult.Value! , valorMotoristaResult.Value! , dataEmissaoResult.Value! , null , null , null , cliente.Id , null , null , enderecoResult.Value! );
 
 
-        await _freteRepository.AdicionarAsync( freteResponse.Value! );
+        await _freteRepository.AddAsync( freteResponse.Value! );
         var resultado = await _unitOfWork.CommitAsync();
         return resultado ? Result.Success() : Result.Failure( "Falha ao salvar o frete." );
     }

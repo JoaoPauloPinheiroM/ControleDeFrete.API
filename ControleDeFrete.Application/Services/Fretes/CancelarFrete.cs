@@ -15,16 +15,16 @@ public class CancelarFrete : ICancelarFrete
     }
     public async Task<Result> ExecuteAsync ( string codigoFrete )
     {
-        var frete = await _freteRepository.ObterFretePorCodigoAsync( codigoFrete );
+        var frete = await _freteRepository.GetByCodigoAsync( codigoFrete );
         if (frete is null)
-            return  Result.Failure( "Frete n��o encontrado."  );
+            return Result.Failure( "Frete não encontrado." );
         var resultado = frete.Cancelar();
         if (resultado.IsFailure)
-            return  Result.Failure( resultado.Error ?? "Erro ao cancelar o frete." ) ;
+            return Result.Failure( resultado.Error ?? "Erro ao cancelar o frete." );
         var sucesso = await _unitOfWork.CommitAsync();
         if (!sucesso)
-            return  Result.Failure( "Erro ao salvar tentar Cancelar o frete." );
-        return  Result.Success();
+            return Result.Failure( "Erro ao salvar tentar Cancelar o frete." );
+        return Result.Success();
 
     }
 }

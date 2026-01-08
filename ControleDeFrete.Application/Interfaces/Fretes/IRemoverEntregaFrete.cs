@@ -8,5 +8,5 @@ namespace ControleDeFrete.Application.Interfaces.Fretes;
 
 public interface IRemoverEntregaFrete
 {
-    Task<Result> AlterarEntrega ( int sequencia );
+    Task<Result> Execute ( string codigoFrete, int sequencia );
 }

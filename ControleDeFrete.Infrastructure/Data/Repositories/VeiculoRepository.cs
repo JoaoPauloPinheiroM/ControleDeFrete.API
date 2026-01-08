@@ -1,4 +1,5 @@
 ﻿using ControleDeFrete.Domain.Entites;
+using ControleDeFrete.Domain.Enums;
 using ControleDeFrete.Domain.Interfaces;
 using ControleDeFrete.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -31,5 +32,13 @@ public class VeiculoRepository : IVeiculoRepository
     public async Task<IEnumerable<Veiculo>> ObterVeiculosAsync ( )
     {
         return await _context.Veiculos.AsNoTracking().ToListAsync();
+    }
+
+
+    public async Task<bool> VeiculoPossuiFreteAtivoAsync ( int veiculoId )
+    {
+        return await _context.Fretes
+            .AnyAsync( f => f.VeiculoId == veiculoId &&
+                          (f.Status == Status.Pendente || f.Status == Status.EmTransito) );
     }
 }

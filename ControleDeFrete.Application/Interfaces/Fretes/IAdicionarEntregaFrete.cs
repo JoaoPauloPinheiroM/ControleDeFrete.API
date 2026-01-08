@@ -8,5 +8,5 @@ namespace ControleDeFrete.Application.Interfaces.Fretes;
 
 public interface IAdicionarEntregaFrete
 {
-    Task<Result> Execute ( CreateEntregaFreteRequest entrega );
+    Task<Result> Execute ( string codigoFrete, CreateEntregaFreteRequest entrega );
 }

@@ -13,25 +13,25 @@ public class FreteRepository : IFreteRepository
     {
         _context = context;
     }
-    public async Task AdicionarAsync ( Frete frete )
+    public async Task AddAsync ( Frete frete )
     {
         await _context.Fretes.AddAsync( frete );
     }
 
-    public async Task<Frete?> ObterFretePorCodigoAsync ( string codigo )
+    public async Task<Frete?> GetByCodigoAsync ( string codigo )
     {
         return await _context.Fretes.Include( f => f.Entregas )
              .FirstOrDefaultAsync( f => f.Codigo == codigo );
     }
 
-    public async Task<Frete?> ObterPorIdAsync ( int freteId )
+    public async Task<Frete?> GetByIdAsync ( int freteId )
     {
         return await _context.Fretes.Include( f => f.Entregas )
             .FirstOrDefaultAsync( f => f.Id == freteId );
     }
 
 
-    public async Task<IEnumerable<Frete>> ObterTodosAsync ( )
+    public async Task<IEnumerable<Frete>> GetAllAsync ( )
     {
         return await _context.Fretes
             .AsNoTracking()
@@ -40,7 +40,7 @@ public class FreteRepository : IFreteRepository
 
     }
 
-    public async Task<bool> RemoverFreteAsync ( Frete frete )
+    public async Task<bool> RemoveFreteAsync ( Frete frete )
     {
         if (frete.PodeSerRemovido())
         {
@@ -50,17 +50,32 @@ public class FreteRepository : IFreteRepository
         return false;
 
     }
-    public async Task<bool> MotoristaPossuiFreteAtivoAsync ( int motoristaId )
-    {
 
-        return await _context.Fretes
-            .AnyAsync( f => f.MotoristaId == motoristaId &&
-                          (f.Status == Status.Pendente || f.Status == Status.EmTransito) );
-    }
-    public async Task<bool> VeiculoPossuiFreteAtivoAsync ( int veiculoId )
+    public async Task<IEnumerable<Frete>>  GetByClienteIdAsync (int idCliente)
     {
         return await _context.Fretes
-            .AnyAsync( f => f.VeiculoId == veiculoId &&
-                          (f.Status == Status.Pendente || f.Status == Status.EmTransito) );
+            .AsNoTracking()
+            .Include( f => f.Entregas )
+            .Where( f => f.ClienteId == idCliente )
+            .ToListAsync();
     }
+
+    public async Task<IEnumerable<Frete>> GetByMotoristaIdAsync (int idMotorista)
+    {
+        return await _context.Fretes
+            .AsNoTracking()
+            .Include( f => f.Entregas )
+            .Where( f => f.MotoristaId == idMotorista )
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Frete>> GetbyStatusAsync (Status status)
+    {
+        return await _context.Fretes
+            .AsNoTracking()
+            .Include( f => f.Entregas )
+            .Where( f => f.Status == status )
+            .ToListAsync();
+    }
+
 }

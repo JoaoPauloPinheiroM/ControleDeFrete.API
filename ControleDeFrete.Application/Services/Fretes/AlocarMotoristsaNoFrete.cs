@@ -2,9 +2,6 @@
 using ControleDeFrete.Application.Interfaces.Fretes;
 using ControleDeFrete.Domain.Interfaces;
 using ControleDeFrete.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ControleDeFrete.Application.Services.Fretes;
 
@@ -22,22 +19,27 @@ public class AlocarMotoristsaNoFrete : IAlocarMotoristsaNoFrete
 
     public async Task<Result> ExecuteAsync ( string codigoFrete , string documentMotorista )
     {
-        var frete = await _freteRepository.ObterFretePorCodigoAsync( codigoFrete );
-        if ( frete is null )
+        var frete = await _freteRepository.GetByCodigoAsync( codigoFrete );
+        if (frete is null)
             return Result.Failure( "Frete não encontrado." );
+
         var documento = CpfCnpj.Create( documentMotorista );
-        if (documento.IsFailure )
+        if (documento.IsFailure)
             return Result.Failure( "Documento do motorista inválido." );
 
         var motorista = await _motoristaRepository.ObterPorcumentoAsync( documento.Value );
-        if ( motorista is null )
+        if (motorista is null)
             return Result.Failure( "Motorista não encontrado." );
 
-        if ( !motorista.Ativo )
+        if (!motorista.Ativo)
             return Result.Failure( "Motorista inativo." );
+
+
         frete.AtribuirMotorista( motorista.Id );
+
+
         var sucesso = await _unitOfWork.CommitAsync();
-        if ( !sucesso )
+        if (!sucesso)
             return Result.Failure( "Erro ao alocar motorista no frete." );
         return Result.Success();
     }

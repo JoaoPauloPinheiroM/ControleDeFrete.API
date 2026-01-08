@@ -1,8 +1,5 @@
 ﻿using ControleDeFrete.API.Application.Common.Result;
 using ControleDeFrete.Application.Interfaces.Frete;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ControleDeFrete.Application.Services.Fretes;
 

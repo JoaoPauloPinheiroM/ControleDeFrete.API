@@ -7,5 +7,5 @@ namespace ControleDeFrete.Application.Interfaces.Fretes;
 
 public interface IReabrirFrete
 {
-    Task<Result> Execute (int freteId);
+    Task<Result> Execute (string codigoFrete);
 }
