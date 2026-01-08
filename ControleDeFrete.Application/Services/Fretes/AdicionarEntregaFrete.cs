@@ -35,6 +35,8 @@ public class AdicionarEntregaFrete : IAdicionarEntregaFrete
         if (cliente is null)
             return Result.Failure( "Cliente não encontrado." );
 
+        if(!cliente.Ativo)
+            return Result.Failure( "Cliente inativo." );
 
         var destino = Localizacao.Create(
             entrega.Logradouro ,

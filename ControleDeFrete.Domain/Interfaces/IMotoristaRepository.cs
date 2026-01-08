@@ -9,6 +9,7 @@ public interface IMotoristaRepository
 {
     public Task<Motorista?> ObterPorIdAsync ( int motoristaId );
     public Task<IEnumerable<Motorista>> ObterTodosAsync ( );
+    public Task<IEnumerable<Motorista>> GetByStatusAsync ( bool status );
     public Task<Motorista?> ObterPorcumentoAsync ( string documento );
     public  Task<bool> MotoristaPossuiFreteAtivoAsync ( int motoristaId );
     public Task AdicionarAsync ( Motorista motorista );

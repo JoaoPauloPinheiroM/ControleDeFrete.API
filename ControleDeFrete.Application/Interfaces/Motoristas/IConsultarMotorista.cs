@@ -10,7 +10,6 @@ public interface IConsultarMotorista
 {
     Task<DetalhesMotoristaResponse?> GetByIdAsync(int motoristaId);
     Task<IEnumerable<DetalhesMotoristaResponse>> GetAllMotoristaAsync();
-    Task<DetalhesMotoristaResponse?> GetByCnhAsync(string cnh);
     Task<DetalhesMotoristaResponse?> GetByDocumentAsync(string documento);
-    Task<DetalhesMotoristaResponse?> GetByStatusAsync(Status status);
+    Task<IEnumerable<DetalhesMotoristaResponse>> GetByStatusAsync (bool status);
 }
