@@ -1,6 +1,4 @@
-﻿using ControleDeFrete.API.Infrastructure.Data;
-using ControleDeFrete.API.Infrastructure.Data.Repositories;
-using ControleDeFrete.Domain.Interfaces;
+﻿using ControleDeFrete.API.Infrastructure.Data.Repositories;
 using ControleDeFrete.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -10,17 +8,28 @@ namespace ControleDeFrete.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructureServices ( this IServiceCollection services , IConfiguration configuration )
     {
         // Database Context
         services.AddDbContext<ControleDeFreteContext>( options =>
             options.UseSqlServer( configuration.GetConnectionString( "DefaultConnection" ) ) );
-        services.AddScoped<IMotoristaRepository , MotoristaRepository>();
-        services.AddScoped<IVeiculoRepository , VeiculoRepository>();
-        services.AddScoped<IFreteRepository , FreteRepository>();
-        services.AddScoped<IClienteRepository , ClienteRepository>();
-        // Unit of Work
-        services.AddScoped<IUnitOfWork , UnitOfWork>();
+
+
+
+        //services.Scan( scan => scan
+        //    .FromAssemblyOf<FreteRepository>() // Escaneia o assembly onde os repositórios estão
+        //    .AddClasses( classes => classes.Where( type => type.Name.EndsWith( "Repository" ) || type.Name == "UnitOfWork" ) )
+        //    .AsImplementedInterfaces()
+        //    .WithScopedLifetime() );
+
+
+        services.Scan( scan => scan
+            .FromAssembliesOf( typeof( ControleDeFreteContext ) )
+            .AddClasses( classes => classes.Where( t => t.Name.EndsWith( "Repository" ) || t.Name == "UnitOfWork" ) )
+            .AsImplementedInterfaces()
+            .WithScopedLifetime() );
+
+
         return services;
     }
 }

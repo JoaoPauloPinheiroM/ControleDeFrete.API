@@ -29,7 +29,7 @@ public class CriarCliente : ICriarCliente
             return Result.Failure( enderecoResult.Error! );
 
 
-        var clienteExistente = await _repository.ObterPorDocumentoAsync( documentoResult.Value );
+        var clienteExistente = await _repository.GetByDocument( documentoResult.Value );
         if (clienteExistente is not null)
             return Result.Failure( "Já existe um cliente cadastrado com este documento." );
 
@@ -38,7 +38,7 @@ public class CriarCliente : ICriarCliente
         if (clienteResult.IsFailure)
             return Result.Failure( clienteResult.Error! );
 
-        await _repository.AdicionarAsync( clienteResult.Value! );
+        await _repository.AddAsync( clienteResult.Value! );
 
         var resultado = await _unitOfWork.CommitAsync();
         return resultado ? Result.Success() : Result.Failure( "Ocorreu um erro ao salvar o cliente." );

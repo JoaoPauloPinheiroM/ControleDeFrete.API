@@ -35,7 +35,7 @@ public class CriarFrete : ICriarFrete
         if (enderecoResult.IsFailure)
             return Result.Failure( enderecoResult.Error! );
 
-        var cliente = await _clienteRepository.ObterPorDocumentoAsync( documentoClienteResult.Value );
+        var cliente = await _clienteRepository.GetByDocument( documentoClienteResult.Value );
         if (cliente is null || !cliente.Ativo)
             return Result.Failure( "Cliente não encontrado ou não está ativo." );
 

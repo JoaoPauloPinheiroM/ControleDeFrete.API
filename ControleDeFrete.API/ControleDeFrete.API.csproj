@@ -7,9 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\ClienteEndpoints\**" />
+    <Compile Remove="Controllers\MotoristaEndpoints\**" />
+    <Compile Remove="Controllers\VeiculoEndpoints\**" />
     <Compile Remove="Infrastructure\**" />
+    <Content Remove="Controllers\ClienteEndpoints\**" />
+    <Content Remove="Controllers\MotoristaEndpoints\**" />
+    <Content Remove="Controllers\VeiculoEndpoints\**" />
     <Content Remove="Infrastructure\**" />
+    <EmbeddedResource Remove="Controllers\ClienteEndpoints\**" />
+    <EmbeddedResource Remove="Controllers\MotoristaEndpoints\**" />
+    <EmbeddedResource Remove="Controllers\VeiculoEndpoints\**" />
     <EmbeddedResource Remove="Infrastructure\**" />
+    <None Remove="Controllers\ClienteEndpoints\**" />
+    <None Remove="Controllers\MotoristaEndpoints\**" />
+    <None Remove="Controllers\VeiculoEndpoints\**" />
     <None Remove="Infrastructure\**" />
   </ItemGroup>
 
@@ -24,12 +36,8 @@
     </PackageReference>
     
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\ClienteEndpoints\" />
-    <Folder Include="Controllers\MotoristaEndpoints\" />
-    <Folder Include="Controllers\VeiculoEndpoints\" />
+    
+    <PackageReference Include="Scrutor" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

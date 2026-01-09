@@ -31,7 +31,7 @@ public class AdicionarEntregaFrete : IAdicionarEntregaFrete
             return Result.Failure( documentoCliente.Error! );
 
 
-        var cliente = await _clienteRepository.ObterPorDocumentoAsync( documentoCliente.Value );
+        var cliente = await _clienteRepository.GetByDocument( documentoCliente.Value );
         if (cliente is null)
             return Result.Failure( "Cliente não encontrado." );
 

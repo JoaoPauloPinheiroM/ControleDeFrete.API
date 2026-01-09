@@ -45,7 +45,7 @@ public class ConsultarFrete : IConsultarFrete
 
     public async Task<IEnumerable<DetalhesFreteResponse>> GetByClienteIdAsync ( string docCliente )
     {
-        var clinte = await _clienteRepository.ObterPorDocumentoAsync( docCliente );
+        var clinte = await _clienteRepository.GetByDocument( docCliente );
         if (clinte is null)
             return [];
 
