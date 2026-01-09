@@ -10,5 +10,6 @@
   </Folder>
   <Folder Name="/04-UI/">
     <Project Path="ControleDeFrete.API/ControleDeFrete.API.csproj" />
+    <Project Path="ControleDeFrete.WebAssembly/ControleDeFrete.WebAssembly.csproj" Id="96cb1694-7ce6-433d-8937-57fc17c3bf75" />
   </Folder>
 </Solution>

@@ -5,8 +5,10 @@ namespace ControleDeFrete.Domain.Interfaces;
 
 public interface IClienteRepository
 {
-    public Task<Cliente?> ObterPorIdAsync ( int id );
-    public Task<Cliente?> ObterPorDocumentoAsync ( string documento );
-    public Task<IEnumerable<Cliente>> ObterClientesAsync ( );
-    public Task AdicionarAsync ( Cliente cliente );
+    public Task<Cliente?> GetByIdAsync ( int id );
+    public Task<Cliente?> GetByDocument ( string documento );
+    public Task<bool> GetFreteAtivo ( int idCliente );
+    public Task<IEnumerable<Cliente>> GetAllAsync ( );
+    public Task<IEnumerable<Cliente>> GetBySatusAsync ( bool status);
+    public Task AddAsync ( Cliente cliente );
 }

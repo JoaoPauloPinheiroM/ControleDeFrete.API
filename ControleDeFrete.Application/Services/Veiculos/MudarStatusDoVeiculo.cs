@@ -2,9 +2,6 @@
 using ControleDeFrete.Application.Interfaces.Veiculos;
 using ControleDeFrete.Domain.Interfaces;
 using ControleDeFrete.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ControleDeFrete.Application.Services.Veiculos;
 
@@ -12,13 +9,13 @@ public class MudarStatusDoVeiculo : IMudarStatusDoVeiculo
 {
     private readonly IVeiculoRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
-    public MudarStatusDoVeiculo ( IVeiculoRepository repository, IUnitOfWork unitOfWork )
+    public MudarStatusDoVeiculo ( IVeiculoRepository repository , IUnitOfWork unitOfWork )
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
     }
 
-    public async  Task<Result> Execute ( string codPlaca )
+    public async Task<Result> Execute ( string codPlaca )
     {
         var placa = Placa.Create( codPlaca );
         if (placa.IsFailure)

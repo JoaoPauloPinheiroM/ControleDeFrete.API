@@ -13,25 +13,38 @@ public class ClienteRepository : IClienteRepository
     {
         _context = context;
     }
-    public async Task AdicionarAsync ( Cliente cliente )
+    public async Task AddAsync ( Cliente cliente )
     {
         await _context.Clientes.AddAsync( cliente );
     }
 
-    public async Task<IEnumerable<Cliente>> ObterClientesAsync ( )
+    public async Task<IEnumerable<Cliente>> GetBySatusAsync ( bool status )
+    {
+        return await _context.Clientes
+            .AsNoTracking()
+            .Where( c => c.Ativo == status ).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Cliente>> GetAllAsync ( )
     {
         return await _context.Clientes.AsNoTracking().ToListAsync();
 
     }
 
-    public async Task<Cliente?> ObterPorDocumentoAsync ( string documento )
+    public async Task<Cliente?> GetByDocument ( string documento )
     {
         return await _context.Clientes
             .FirstOrDefaultAsync( c => c.Documento.Numero == documento );
     }
 
-    public async Task<Cliente?> ObterPorIdAsync ( int id )
+    public async Task<Cliente?> GetByIdAsync ( int id )
     {
         return await _context.Clientes.FindAsync( id );
+    }
+    public async Task<bool> GetFreteAtivo ( int idCliente )
+    {
+        return await _context.Fretes
+            .AnyAsync( f => f.ClienteId == idCliente &&
+                           (!f.IsCancelado() && !f.IsFinalizado() ) );
     }
 }

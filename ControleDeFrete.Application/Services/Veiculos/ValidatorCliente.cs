@@ -4,6 +4,6 @@ using System.Text;
 
 namespace ControleDeFrete.Application.Services.Veiculos;
 
-internal class ValidatorCliente
+public class ValidatorCliente
 {
 }

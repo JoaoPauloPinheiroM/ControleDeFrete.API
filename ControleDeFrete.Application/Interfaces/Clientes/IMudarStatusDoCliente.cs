@@ -7,5 +7,5 @@ namespace ControleDeFrete.Application.Interfaces.Clientes;
 
 public interface IMudarStatusDoCliente
 {
-    Task<Result> ChangeStatusAsync(int clienteId);
+    Task<Result> ChangeStatusAsync(string documentoCliente);
 }

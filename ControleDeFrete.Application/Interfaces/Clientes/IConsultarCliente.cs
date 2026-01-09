@@ -9,6 +9,6 @@ public interface IConsultarCliente
     Task<DetalhesClienteResponse?> GetByIdAsync ( int clienteId );
     Task<IEnumerable<DetalhesClienteResponse>> GetAllClienteAsync ( );
     Task<DetalhesClienteResponse?> GetByDocumentAsync ( string document );
-    Task<DetalhesClienteResponse?> GetByStatusAsync ( Status status );
+    Task<IEnumerable<DetalhesClienteResponse>> GetByStatusAsync ( bool status );
 
 }
