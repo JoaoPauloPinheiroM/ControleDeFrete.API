@@ -3,6 +3,7 @@ using ControleDeFrete.API.Application.Common.Mappings;
 using ControleDeFrete.Application.Interfaces.Motoristas;
 using ControleDeFrete.Domain.Enums;
 using ControleDeFrete.Domain.Interfaces;
+using ControleDeFrete.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -36,7 +37,12 @@ public class ConsultarMotorista : IConsultarMotorista
 
     public async Task<DetalhesMotoristaResponse?> GetByDocumentAsync ( string documento )
     {
-        var motorista = await _motoristaRepository.ObterPorcumentoAsync( documento );
+      var documentoResult = CpfCnpj.Create( documento );
+        if (documentoResult.IsFailure)
+                return null;
+
+
+        var motorista = await _motoristaRepository.ObterPorcumentoAsync( documentoResult.Value );
         if (motorista is null)
             return null;
 

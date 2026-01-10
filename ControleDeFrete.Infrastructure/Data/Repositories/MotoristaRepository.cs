@@ -1,4 +1,5 @@
-﻿using ControleDeFrete.Domain.Entites;
+﻿using ControleDeFrete.Domain.Common;
+using ControleDeFrete.Domain.Entites;
 using ControleDeFrete.Domain.Enums;
 using ControleDeFrete.Domain.Interfaces;
 using ControleDeFrete.Domain.ValueObjects;
@@ -19,10 +20,10 @@ public class MotoristaRepository : IMotoristaRepository
         await _context.Motoristas.AddAsync( motorista );
     }
 
-    public async Task<Motorista?> ObterPorcumentoAsync ( string documento )
+    public async Task<Motorista?> ObterPorcumentoAsync ( CpfCnpj documento )
     {
-        return await _context.Motoristas.AsNoTracking()
-            .FirstOrDefaultAsync( m => m.Documento.Numero == documento );
+        return await _context.Motoristas
+            .FirstOrDefaultAsync( m => m.Documento.Numero == documento.Numero );
     }
 
     public async Task<Motorista?> ObterPorIdAsync ( int motoristaId )
@@ -41,7 +42,8 @@ public class MotoristaRepository : IMotoristaRepository
 
         return await _context.Fretes
             .AnyAsync( f => f.MotoristaId == motoristaId &&
-                          (!f.IsCancelado() && !f.IsFinalizado() ) );
+                       f.Status != Status.Cancelado &&
+                       f.Status != Status.Finalizado );
     }
 
     public async  Task<IEnumerable<Motorista>> GetByStatusAsync ( bool status )

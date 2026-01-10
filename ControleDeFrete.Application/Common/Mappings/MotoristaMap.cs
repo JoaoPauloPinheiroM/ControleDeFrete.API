@@ -10,7 +10,7 @@ public static class MotoristaMap
         return new DetalhesMotoristaResponse
         (
             motorista.Nome ,
-            motorista.Documento ,
+            motorista.Documento.Numero ,
             motorista.Cnh ,
             $"{motorista.Endereco.Logradouro}, {motorista.Endereco.Cidade}-{motorista.Endereco.Estado}" ,
             motorista.Ativo

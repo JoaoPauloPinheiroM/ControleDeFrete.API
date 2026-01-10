@@ -1,5 +1,6 @@
 ﻿using ControleDeFrete.API.Application.Common.DTOS.Responses.Clientes;
 using ControleDeFrete.API.Application.Common.Mappings;
+using ControleDeFrete.API.Application.Common.Result;
 using ControleDeFrete.Application.Interfaces.Clientes;
 using ControleDeFrete.Domain.Enums;
 using ControleDeFrete.Domain.Interfaces;

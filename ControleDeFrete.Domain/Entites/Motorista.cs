@@ -36,7 +36,7 @@ public sealed class Motorista
     }
     public Result Inativar ( bool possuiFreteEmCurso )
     {
-        if (this.Ativo && possuiFreteEmCurso)
+        if (possuiFreteEmCurso)
         {
             return Result.Failure( "O motorista não pode ser inativado enquanto possuir frete em curso." );
         }

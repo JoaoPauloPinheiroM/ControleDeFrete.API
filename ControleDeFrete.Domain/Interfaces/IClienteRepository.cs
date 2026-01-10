@@ -6,7 +6,7 @@ namespace ControleDeFrete.Domain.Interfaces;
 public interface IClienteRepository
 {
     public Task<Cliente?> GetByIdAsync ( int id );
-    public Task<Cliente?> GetByDocument ( string documento );
+    public Task<Cliente?> GetByDocument ( CpfCnpj documento );
     public Task<bool> GetFreteAtivo ( int idCliente );
     public Task<IEnumerable<Cliente>> GetAllAsync ( );
     public Task<IEnumerable<Cliente>> GetBySatusAsync ( bool status);

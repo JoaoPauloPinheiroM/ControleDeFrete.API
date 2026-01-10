@@ -1,6 +1,7 @@
 ﻿using ControleDeFrete.API.Application.Common.Result;
 using ControleDeFrete.Application.Interfaces.Clientes;
 using ControleDeFrete.Domain.Interfaces;
+using ControleDeFrete.Domain.ValueObjects;
 using System.Runtime.InteropServices;
 
 namespace ControleDeFrete.Application.Services.Clientes;
@@ -17,7 +18,11 @@ public class MudarStatusDoCliente : IMudarStatusDoCliente
 
     public async Task<Result> ChangeStatusAsync ( string documentoCliente )
     {
-        var cliente = await _clienteRepository.GetByDocument( documentoCliente );
+        var documentoResult = CpfCnpj.Create( documentoCliente );
+        if ( documentoResult.IsFailure )
+            return Result.Failure( documentoResult.Error! );
+
+        var cliente = await _clienteRepository.GetByDocument( documentoResult.Value );
         if ( cliente is null )
             return Result.Failure( "Cliente não encontrado." );
 

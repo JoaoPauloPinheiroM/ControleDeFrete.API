@@ -16,13 +16,13 @@ public class ClienteConfiguration : IEntityTypeConfiguration<Cliente>
 
         // Mapeamento de CpfCnpj
 
-        builder.Property<CpfCnpj>( c => c.Documento )
-                        .HasConversion(
-                            v => v.Numero ,
-                            v => CpfCnpj.Create( v ).Value!
-                        )
-                        .HasColumnName( "Documento" )
-                        .HasMaxLength( 14 );
+
+        builder.ComplexProperty( c => c.Documento ,
+            doc => {
+                doc.Property( x => x.Numero )
+                .HasColumnName( "Documento" )
+                .HasMaxLength( 14 );
+            } );
 
         // Mapeamento de Localizacao
         builder.OwnsOne( c => c.Endereco , l =>

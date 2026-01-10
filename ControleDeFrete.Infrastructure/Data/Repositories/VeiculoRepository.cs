@@ -20,19 +20,18 @@ public class VeiculoRepository : IVeiculoRepository
 
     public async Task<Veiculo?> ObterPorIdAsync ( int id )
     {
-        return await _context.Veiculos.AsNoTracking().FirstOrDefaultAsync( v => v.Id == id );
+        return await _context.Veiculos.FirstOrDefaultAsync( v => v.Id == id );
     }
 
     public async Task<Veiculo?> ObterPorPlacaAsync ( string placa )
     {
-        return await _context.Veiculos.AsNoTracking()
+        return await _context.Veiculos
             .FirstOrDefaultAsync( v => v.Placa.Valor == placa );
     }
 
     public async Task<IEnumerable<Veiculo>> ObterPorStatusAsync ( bool status )
     {
         return await _context.Veiculos
-            .AsNoTracking()
             .Where( v => v.Ativo == status )
             .ToListAsync();
     }
@@ -47,6 +46,7 @@ public class VeiculoRepository : IVeiculoRepository
     {
         return await _context.Fretes
             .AnyAsync( f => f.VeiculoId == veiculoId &&
-                          (!f.IsCancelado() && !f.IsFinalizado()) );
+                       f.Status != Status.Cancelado &&
+                       f.Status != Status.Finalizado );
     }
 }

@@ -2,6 +2,7 @@
 using ControleDeFrete.API.Application.Common.Mappings;
 using ControleDeFrete.Domain.Enums;
 using ControleDeFrete.Domain.Interfaces;
+using ControleDeFrete.Domain.ValueObjects;
 using ControleDeFretes.Application.Interfaces.Fretes;
 
 namespace ControleDeFrete.Application.Services.Fretes;
@@ -45,7 +46,11 @@ public class ConsultarFrete : IConsultarFrete
 
     public async Task<IEnumerable<DetalhesFreteResponse>> GetByClienteIdAsync ( string docCliente )
     {
-        var clinte = await _clienteRepository.GetByDocument( docCliente );
+        var docResult = CpfCnpj.Create( docCliente );
+        if (docResult.IsFailure)
+            return [];
+
+        var clinte = await _clienteRepository.GetByDocument( docResult.Value );
         if (clinte is null)
             return [];
 
@@ -75,7 +80,11 @@ public class ConsultarFrete : IConsultarFrete
 
     public async Task<IEnumerable<DetalhesFreteResponse>> GetByMotoristaIdAsync ( string docMotorista )
     {
-        var motorista = await _motoristaRepository.ObterPorcumentoAsync( docMotorista );
+        var doc = CpfCnpj.Create( docMotorista );
+        if (doc.IsFailure)
+            return [];
+
+        var motorista = await _motoristaRepository.ObterPorcumentoAsync( doc.Value );
         if (motorista is null)
             return [];
         var frete = await _freteRepository.GetByMotoristaIdAsync( motorista.Id );

@@ -10,7 +10,7 @@ public class Cliente
     public string Nome { get; private set; } = null!;
     public CpfCnpj Documento { get; private set; }
     public TipoPessoa TipoPessoa => Documento.IsCpf ? TipoPessoa.Fisica : TipoPessoa.Juridica;
-    public Localizacao Endereco { get; private set; }
+    public Localizacao Endereco { get; private set; } = null!;
     public bool Ativo { get; private set; }
     private Cliente ( ) { }
     private Cliente ( string nome , CpfCnpj documento , Localizacao endereco )
@@ -30,7 +30,7 @@ public class Cliente
     }
     public Result Inativar ( bool possuiFreteEmCurso )
     {
-        if (this.Ativo && possuiFreteEmCurso)
+        if ( possuiFreteEmCurso)
         {
             return Result.Failure( "O Cliente não pode ser inativado enquanto possuir frete em curso." );
         }
@@ -56,8 +56,21 @@ public class Cliente
         Endereco = endereco;
         return Result.Success();
     }
-    public Result AlterarNome ( string novoNome )
+    public Result AlterarDocumento (bool possuiFreteEmCurso , CpfCnpj novoDocumento )
     {
+        if (possuiFreteEmCurso)
+        {
+            return Result.Failure( "O Cliente não pode ter o documento atualizado enquanto possuir frete em curso." );
+        }
+        Documento = novoDocumento;
+        return Result.Success();
+    }
+    public Result AlterarNome ( bool possuiFreteEmCurso, string novoNome )
+    {
+        if (possuiFreteEmCurso)
+        {
+            return Result.Failure( "O Cliente não pode ter o documento atualizado enquanto possuir frete em curso." );
+        }
         if (string.IsNullOrWhiteSpace( novoNome ))
             return Result.Failure( "O nome do cliente não pode ser vazio." );
         this.Nome = novoNome.Trim();

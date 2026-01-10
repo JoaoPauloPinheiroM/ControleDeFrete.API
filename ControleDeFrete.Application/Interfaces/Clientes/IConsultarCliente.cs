@@ -1,4 +1,5 @@
 ﻿using ControleDeFrete.API.Application.Common.DTOS.Responses.Clientes;
+using ControleDeFrete.API.Application.Common.Result;
 using ControleDeFrete.Domain.Entites;
 using ControleDeFrete.Domain.Enums;
 

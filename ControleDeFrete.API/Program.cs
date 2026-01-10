@@ -20,14 +20,34 @@ builder.Services.AddOpenApiDocument( config =>
 
 // Registra Infraestrutura (Repositorios e UoW via Scrutor definido )
 builder.Services.AddInfrastructureServices( builder.Configuration );
-
 builder.Services.Scan( scan => scan
     .FromAssemblies(
-        ControleDeFrete.Application.AssemblyReference.Assembly ,
-        ControleDeFrete.Infrastructure.AssemblyReference.Assembly
+        ControleDeFrete.Application.AssemblyReference.Assembly
     )
-    .AddClasses( classes => classes.Where( type =>
-        !type.Namespace!.Contains( ".DTOS" ) ) )
+    .AddClasses( classes => classes.Where( t =>
+        t.Name.StartsWith( "Criar" ) ||
+        t.Name.StartsWith( "Editar" ) ||
+        t.Name.StartsWith( "Mudar" ) ||
+        t.Name.StartsWith( "Consultar" ) ||
+        t.Name.StartsWith( "Adicionar" ) ||
+        t.Name.StartsWith( "Finalizar" ) ||
+        t.Name.StartsWith( "Cancelar" ) ||
+        t.Name.StartsWith( "Alocar" ) ||
+        t.Name.StartsWith( "Registrar" ) ||
+        t.Name.StartsWith( "Remover" ) ||
+        t.Name.StartsWith( "Reabrir" ) ||
+        t.Name.StartsWith( "Iniciar" )
+    ) )
+    .AsImplementedInterfaces()
+    .WithScopedLifetime()
+);
+
+//Validator.... irei implementar la  na frente
+builder.Services.Scan( scan => scan
+    .FromAssemblies( ControleDeFrete.Application.AssemblyReference.Assembly )
+    .AddClasses( classes => classes.Where( t =>
+        t.Name.StartsWith( "Validator" )
+    ) )
     .AsImplementedInterfaces()
     .WithScopedLifetime()
 );

@@ -19,5 +19,8 @@ public class ControleDeFreteContext : DbContext
     {
         base.OnModelCreating( modelBuilder );
         modelBuilder.ApplyConfigurationsFromAssembly( typeof( ControleDeFreteContext ).Assembly );
+        
     }
+
+   
 }

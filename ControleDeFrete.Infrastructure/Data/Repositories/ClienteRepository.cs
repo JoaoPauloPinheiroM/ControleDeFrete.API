@@ -1,4 +1,5 @@
 ﻿using ControleDeFrete.Domain.Entites;
+using ControleDeFrete.Domain.Enums;
 using ControleDeFrete.Domain.Interfaces;
 using ControleDeFrete.Domain.ValueObjects;
 using ControleDeFrete.Infrastructure.Data;
@@ -31,10 +32,10 @@ public class ClienteRepository : IClienteRepository
 
     }
 
-    public async Task<Cliente?> GetByDocument ( string documento )
+    public async Task<Cliente?> GetByDocument ( CpfCnpj documento )
     {
         return await _context.Clientes
-            .FirstOrDefaultAsync( c => c.Documento.Numero == documento );
+            .FirstOrDefaultAsync( c => c.Documento.Numero == documento.Numero );
     }
 
     public async Task<Cliente?> GetByIdAsync ( int id )
@@ -45,6 +46,7 @@ public class ClienteRepository : IClienteRepository
     {
         return await _context.Fretes
             .AnyAsync( f => f.ClienteId == idCliente &&
-                           (!f.IsCancelado() && !f.IsFinalizado() ) );
+                       f.Status != Status.Cancelado && 
+                       f.Status != Status.Finalizado );
     }
 }

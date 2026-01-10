@@ -2,43 +2,31 @@
 
 namespace ControleDeFrete.Domain.ValueObjects;
 
+
 public readonly struct CpfCnpj
 {
-    private readonly string _value;
-    private readonly bool _isInitialized;
-    public string Numero
-    {
-        get
-        {
-            if (!_isInitialized){
-                throw new InvalidOperationException( "CpfCnpj não foi inicializado com o Create." );
-            }
-            return _value;
+    public string Numero { get; }
 
-        }
-    }
-    public bool IsCpf => _value.Length == 11;
-    public bool IsCnpj => _value.Length == 14;
+    public bool IsCpf => Numero.Length == 11;
+    public bool IsCnpj => Numero.Length == 14;
 
     private CpfCnpj ( string numero )
     {
-        _value = numero;
-        _isInitialized = true;
+        Numero = numero;
     }
 
-    public static Result<CpfCnpj> Create ( string numero )
+    public static Result<CpfCnpj> Create ( string input )
     {
-        if (string.IsNullOrWhiteSpace( numero ))
-            return Result<CpfCnpj>.Failure( "O documento não pode ser vazio." );
+        if (string.IsNullOrWhiteSpace( input ))
+            return Result<CpfCnpj>.Failure( "Documento não pode ser vazio." );
 
-        var limpo = new string( numero.Where( char.IsDigit ).ToArray() );
+        var numero = new string( input.Where( char.IsDigit ).ToArray() );
 
-        if (limpo.Length != 11 && limpo.Length != 14)
+        if (numero.Length != 11 && numero.Length != 14)
             return Result<CpfCnpj>.Failure( "Documento deve ter 11 (CPF) ou 14 (CNPJ) dígitos." );
 
-
-        return Result<CpfCnpj>.Success( new CpfCnpj( limpo ) );
+        return Result<CpfCnpj>.Success( new CpfCnpj( numero ) );
     }
 
-    public static implicit operator string ( CpfCnpj d ) => d._value;
+    public override string ToString ( ) => Numero;
 }

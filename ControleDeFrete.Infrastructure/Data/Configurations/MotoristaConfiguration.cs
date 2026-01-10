@@ -15,14 +15,14 @@ public class MotoristaConfiguration : IEntityTypeConfiguration<Motorista>
         builder.Property( m => m.Nome ).IsRequired().HasMaxLength( 150 );
         builder.Property( m => m.Cnh ).IsRequired().HasMaxLength( 20 );
 
-        // Value Objects
-        builder.Property( m => m.Documento )
-             .HasConversion(
-                 v => v.Numero ,
-                 v => CpfCnpj.Create( v ).Value
-             )
-             .HasColumnName( "Documento" )
-             .HasMaxLength( 14 );
+
+        builder.ComplexProperty(m => m.Documento, 
+            doc => {
+                doc.Property( x => x.Numero )
+                .HasColumnName( "Documento" )
+                .HasMaxLength( 14 );
+            } );
+       
 
         builder.ComplexProperty( m => m.Endereco , l =>
         {

@@ -19,6 +19,7 @@ public sealed class Veiculo
         Modelo = modelo.Trim();
         Marca = marca.Trim();
         AnoFabricacao = anoFabricacao;
+        Ativo = true;
     }
     public Result AtualizarPlaca ( string novaPlacaRaw )
     {

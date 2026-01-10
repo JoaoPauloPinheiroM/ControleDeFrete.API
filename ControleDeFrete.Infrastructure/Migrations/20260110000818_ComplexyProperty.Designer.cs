@@ -5,6 +5,7 @@ using ControleDeFrete.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControleDeFrete.API.Migrations
 {
     [DbContext(typeof(ControleDeFreteContext))]
-    partial class ControleDeFreteContextModelSnapshot : ModelSnapshot
+    [Migration("20260110000818_ComplexyProperty")]
+    partial class ComplexyProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,8 +49,9 @@ namespace ControleDeFrete.API.Migrations
                             b1.Property<string>("Numero")
                                 .IsRequired()
                                 .HasMaxLength(14)
-                                .HasColumnType("nvarchar(14)")
-                                .HasColumnName("Documento");
+                                .HasColumnType("nchar(14)")
+                                .HasColumnName("Documento")
+                                .IsFixedLength();
                         });
 
                     b.HasKey("Id");
@@ -232,8 +236,9 @@ namespace ControleDeFrete.API.Migrations
                             b1.Property<string>("Numero")
                                 .IsRequired()
                                 .HasMaxLength(14)
-                                .HasColumnType("nvarchar(14)")
-                                .HasColumnName("Documento");
+                                .HasColumnType("nchar(14)")
+                                .HasColumnName("Documento")
+                                .IsFixedLength();
                         });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Endereco", "ControleDeFrete.Domain.Entites.Motorista.Endereco#Localizacao", b1 =>

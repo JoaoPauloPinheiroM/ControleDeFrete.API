@@ -21,6 +21,7 @@ public class CriarMotorista : ICriarMotorista
 
     public async  Task<Result> Execute ( CreateMotoristaRequest motorista )
     {
+        
         var documentoResult = CpfCnpj.Create( motorista.Documento );
         if (documentoResult.IsFailure)
             return Result.Failure( documentoResult.Error! );

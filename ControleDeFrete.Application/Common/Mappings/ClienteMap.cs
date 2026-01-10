@@ -10,7 +10,7 @@ public static class ClienteMap
         return new DetalhesClienteResponse
         (
             cliente.Nome ,
-            cliente.Documento ,
+            cliente.Documento.Numero ,
             $"{cliente.Endereco.Logradouro}, {cliente.Endereco.Cidade}-{cliente.Endereco.Estado}" ,
             cliente.Ativo
         );
