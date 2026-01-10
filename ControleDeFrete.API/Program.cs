@@ -35,6 +35,7 @@ builder.Services.Scan( scan => scan
         t.Name.StartsWith( "Alocar" ) ||
         t.Name.StartsWith( "Registrar" ) ||
         t.Name.StartsWith( "Remover" ) ||
+        t.Name.StartsWith( "Excluir" ) ||
         t.Name.StartsWith( "Reabrir" ) ||
         t.Name.StartsWith( "Iniciar" )
     ) )

@@ -29,7 +29,6 @@ public sealed class Veiculo
         this.Placa = result.Value;
         return Result.Success();
     }
-
     public Result AtualizarModelo ( string novoModelo )
     {
         if (string.IsNullOrWhiteSpace( novoModelo ))
@@ -54,12 +53,12 @@ public sealed class Veiculo
     }
     public Result  Inativar(bool possuiFreteEmCurso )
     {
-        if (this.Ativo && possuiFreteEmCurso)
+        if (possuiFreteEmCurso)
         {
             return Result.Failure( "O veículo não pode ser inativado enquanto possuir frete em curso." );
         }
-        Ativo = false;
-        return Result.Success();
+        this.Ativo = false;
+        return Result.Success(); 
     }
     public Result Ativar()
     {
@@ -67,10 +66,9 @@ public sealed class Veiculo
         {
             return Result.Success();
         }
-        Ativo = true;
+        this.Ativo = true;
         return Result.Success();
     }
-
     public static Result<Veiculo> Create ( Placa placa , string modelo , string marca , int anoFabricacao  )
     {
         var placaResult = Placa.Create( placa );

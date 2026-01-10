@@ -28,10 +28,20 @@ public class MudarStatusDoMotorista : IMudarStatusDoMotorista
 
         var posuiFrete = await _motoristaRepository.MotoristaPossuiFreteAtivoAsync( motoristaResult.Id );
 
+        if (motoristaResult.Ativo)
+        {
 
-        var result = motoristaResult.Inativar( posuiFrete );
-        if (result.IsFailure)
-            return Result.Failure( result.Error! );
+            var result = motoristaResult.Inativar( posuiFrete );
+            if (result.IsFailure)
+                return Result.Failure( result.Error! );
+        }
+        else
+        {
+            var result = motoristaResult.Ativar();
+            if (result.IsFailure)
+                return Result.Failure( result.Error! );
+
+        }
 
         var sucesso = await _unitOfWork.CommitAsync();
         if (!sucesso)
