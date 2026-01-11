@@ -2,6 +2,8 @@
 
 Este projeto é um sistema completo para gestão de fretes, motoristas, veículos e clientes. Desenvolvido utilizando as tecnologias mais recentes do ecossistema .NET, incluindo uma API robusta e um frontend interativo em Blazor WebAssembly.
 
+![Painel Principal](Images/painel.png)
+
 ## 🚀 Tecnologias Utilizadas
 
 *   **.NET 10.0**: Plataforma base para o desenvolvimento do backend e frontend.
@@ -58,7 +60,13 @@ O projeto está dividido em camadas lógicas para melhor separação de responsa
 ## 📏 Regras de Negócio e Fluxos
 
 ### Gestão de Fretes
+
+![Lista de Fretes](Images/fretes_painel.png)
+
 O ciclo de vida de um Frete é controlado pelo `Status` e possui rigorosas validações:
+
+#### Ciclo de Vida e Operações
+![Detalhes do Frete](Images/acoes%20fretes.png)
 
 1.  **Criação (Pendente)**:
     *   Um frete é criado no estado `Pendente`.
@@ -74,13 +82,23 @@ O ciclo de vida de um Frete é controlado pelo `Status` e possui rigorosas valid
     *   `FinalizarEntrega`: Marca uma entrega específica como realizada.
     *   Quando **todas** as entregas do frete são concluídas, o status do frete muda automaticamente para `Finalizado` e a `DataEntrega` é registrada.
 
-### Motoristas
+### Cadastros Base
+
+#### Motoristas
+![Lista de Motoristas](Images/motorista.png)
+
 *   **Cadastro**: Requer Nome, CPF (validado), CNH e Endereço.
 *   **Inativação**: Não é possível inativar um motorista que possua um frete "Em Curso" (associado a um frete não finalizado).
 
-### Veículos
+#### Veículos
+![Lista de Veículos](Images/veiculo.png)
+
 *   **Cadastro**: Requer Placa (validada), Modelo, Marca e Ano de Fabricação.
 *   **Validação**: Ano de fabricação deve ser entre 1900 e o ano atual.
+
+#### Clientes
+![Lista de Clientes](Images/cliente.png)
+*   **Gestão**: Cadastro e gerenciamento de clientes ativos para emissão de fretes.
 
 ## 🛠️ Desenvolvimento e Extensão
 
