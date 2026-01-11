@@ -1,5 +1,6 @@
 ﻿using ControleDeFrete.API.Application.Common.DTOS.Responses.Fretes;
 using ControleDeFrete.API.Application.Common.Mappings;
+using ControleDeFrete.Domain.Entites;
 using ControleDeFrete.Domain.Enums;
 using ControleDeFrete.Domain.Interfaces;
 using ControleDeFrete.Domain.ValueObjects;
@@ -26,18 +27,38 @@ public class ConsultarFrete : IConsultarFrete
         _motoristaRepository = motoristaRepository;
         _veiculoRepository = veiculoRepository;
     }
+
+
+
     public async Task<IEnumerable<DetalhesFreteResponse>> GetAllAsync ( )
     {
         var frete = await _freteRepository.GetAllAsync();
         if (frete is null)
-            return []; ;
+            return [];
+
         var response = new List<DetalhesFreteResponse>();
-
-
 
         foreach (var f in frete)
         {
-            var fResponse = f.ToResponse();
+            string motoristaNome = string.Empty;
+            string veiculoPlaca = string.Empty;
+            if (f.MotoristaId is int motoristaId)
+            {
+                var motorista = await _motoristaRepository.ObterPorIdAsync( motoristaId );
+                motoristaNome = motorista?.Nome ?? "Pendente";
+            }
+            if (f.VeiculoId is int veiculoId)
+            {
+                var placa = await _veiculoRepository.ObterPorIdAsync( veiculoId );
+                veiculoPlaca = placa?.Placa ?? "Pendente";
+            }
+            var fResponse = f.ToResponse() with
+            {
+                MotoristaNome = motoristaNome ,
+                VeiculoPlaca = veiculoPlaca ,
+
+            };
+
             response.Add( fResponse );
         }
 
@@ -61,7 +82,25 @@ public class ConsultarFrete : IConsultarFrete
         var response = new List<DetalhesFreteResponse>();
         foreach (var f in frete)
         {
-            var fResponse = f.ToResponse();
+            string motoristaNome = string.Empty;
+            string veiculoPlaca = string.Empty;
+            if (f.MotoristaId is int motoristaId)
+            {
+                var motorista = await _motoristaRepository.ObterPorIdAsync( motoristaId );
+                motoristaNome = motorista?.Nome ?? "Pendente";
+            }
+            if (f.VeiculoId is int veiculoId)
+            {
+                var placa = await _veiculoRepository.ObterPorIdAsync( veiculoId );
+                veiculoPlaca = placa?.Placa ?? "Pendente";
+            }
+            var fResponse = f.ToResponse() with
+            {
+                MotoristaNome = motoristaNome ,
+                VeiculoPlaca = veiculoPlaca ,
+
+            };
+
             response.Add( fResponse );
         }
         return response;
@@ -73,7 +112,57 @@ public class ConsultarFrete : IConsultarFrete
         if (frete is null)
             return null;
 
-        var response = frete.ToResponse();
+
+        string motoristaNome = string.Empty;
+        string veiculoPlaca = string.Empty;
+
+
+        if (frete.MotoristaId is int motoristaId)
+        {
+            var motorista = await _motoristaRepository.ObterPorIdAsync( motoristaId );
+            motoristaNome = motorista?.Nome ?? "Pendente";
+        }
+        if (frete.VeiculoId is int veiculoId)
+        {
+            var placa = await _veiculoRepository.ObterPorIdAsync( veiculoId );
+            veiculoPlaca = placa?.Placa ?? "Pendente";
+        }
+        var response = frete.ToResponse() with
+        {
+            MotoristaNome = motoristaNome ,
+            VeiculoPlaca = veiculoPlaca ,
+
+        };
+
+        return response;
+    }
+    public async Task<DetalhesFreteResponse?> GetByCodigoAsync ( string codigoFrete )
+    {
+        var frete = await _freteRepository.GetByCodigoAsync( codigoFrete );
+        if (frete is null)
+            return null;
+
+
+        string motoristaNome = string.Empty;
+        string veiculoPlaca = string.Empty;
+
+
+        if (frete.MotoristaId is int motoristaId)
+        {
+            var motorista = await _motoristaRepository.ObterPorIdAsync( motoristaId );
+            motoristaNome = motorista?.Nome ?? "Pendente";
+        }
+        if (frete.VeiculoId is int veiculoId)
+        {
+            var placa = await _veiculoRepository.ObterPorIdAsync( veiculoId );
+            veiculoPlaca = placa?.Placa ?? "Pendente";
+        }
+        var response = frete.ToResponse() with
+        {
+            MotoristaNome = motoristaNome ,
+            VeiculoPlaca = veiculoPlaca ,
+
+        };
 
         return response;
     }
@@ -94,7 +183,25 @@ public class ConsultarFrete : IConsultarFrete
         var response = new List<DetalhesFreteResponse>();
         foreach (var f in frete)
         {
-            var fResponse = f.ToResponse();
+            string motoristaNome = string.Empty;
+            string veiculoPlaca = string.Empty;
+            if (f.MotoristaId is int motoristaId)
+            {
+                var motoristaNomeResult = await _motoristaRepository.ObterPorIdAsync( motoristaId );
+                motoristaNome = motoristaNomeResult?.Nome ?? "Pendente";
+            }
+            if (f.VeiculoId is int veiculoId)
+            {
+                var placa = await _veiculoRepository.ObterPorIdAsync( veiculoId );
+                veiculoPlaca = placa?.Placa ?? "Pendente";
+            }
+            var fResponse = f.ToResponse() with
+            {
+                MotoristaNome = motoristaNome ,
+                VeiculoPlaca = veiculoPlaca ,
+
+            };
+
             response.Add( fResponse );
         }
         return response;
@@ -107,11 +214,33 @@ public class ConsultarFrete : IConsultarFrete
         if (frete is null)
             return [];
         var response = new List<DetalhesFreteResponse>();
+
+
         foreach (var f in frete)
         {
-            var fResponse = f.ToResponse();
+            string motoristaNome = string.Empty;
+            string veiculoPlaca = string.Empty;
+            if (f.MotoristaId is int motoristaId)
+            {
+                var motorista = await _motoristaRepository.ObterPorIdAsync( motoristaId );
+                motoristaNome = motorista?.Nome ?? "Pendente";
+            }
+            if(f.VeiculoId is int veiculoId)
+            {
+                var placa = await _veiculoRepository.ObterPorIdAsync ( veiculoId );
+                veiculoPlaca = placa?.Placa ?? "Pendente";
+            }
+            var fResponse = f.ToResponse() with
+            {
+                MotoristaNome = motoristaNome,
+                VeiculoPlaca= veiculoPlaca,
+                
+            };
+
             response.Add( fResponse );
         }
+
+
         return response;
     }
 }

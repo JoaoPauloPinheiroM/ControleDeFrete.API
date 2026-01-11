@@ -16,22 +16,10 @@ public class MotoristaController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Result>> Criar (
         [FromServices] ICriarMotorista service ,
-        string nome ,
-        string documento ,
-        string cnh ,
-        string logradouro ,
-        string cidade ,
-        string estado
+        [FromQuery] CreateMotoristaRequest request
     )
     {
-        var request = new CreateMotoristaRequest(
-            nome ,
-            documento ,
-            cnh ,
-            logradouro ,
-            cidade ,
-            estado
-        );
+
 
         var result = await service.Execute( request );
 
@@ -58,6 +46,9 @@ public class MotoristaController : ControllerBase
         return Ok( result );
     }
 
+
+
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<DetalhesMotoristaResponse>>> ConsultarTodos (
         [FromServices] IConsultarMotorista service
@@ -66,6 +57,8 @@ public class MotoristaController : ControllerBase
         var result = await service.GetAllMotoristaAsync();
         return Ok( result );
     }
+
+
 
     [HttpGet( "status/{ativo}" )]
     public async Task<ActionResult<IEnumerable<DetalhesMotoristaResponse>>> ConsultarPorStatus (
@@ -76,6 +69,9 @@ public class MotoristaController : ControllerBase
         var result = await service.GetByStatusAsync( ativo );
         return Ok( result );
     }
+
+
+
 
     // =========================
     // EDITAR

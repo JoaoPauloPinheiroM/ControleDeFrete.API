@@ -8,6 +8,7 @@ namespace ControleDeFretes.Application.Interfaces.Fretes;
 public interface IConsultarFrete
 {
     Task<DetalhesFreteResponse?> GetByIdAsync ( int idFrete );
+    Task<DetalhesFreteResponse?> GetByCodigoAsync ( string codigoFrete );
     Task<IEnumerable<DetalhesFreteResponse>> GetAllAsync ( );
     Task<IEnumerable<DetalhesFreteResponse>> GetByClienteIdAsync ( string docCliente );
     Task<IEnumerable<DetalhesFreteResponse>> GetByMotoristaIdAsync ( string docMotorista );

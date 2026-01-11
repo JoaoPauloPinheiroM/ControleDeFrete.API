@@ -19,7 +19,7 @@ public sealed class FreteController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Result>> CriarFrete (
         [FromServices] ICriarFrete service ,
-        [FromBody] CreateFreteRequest request
+        [FromQuery] CreateFreteRequest request
     )
     {
         var result = await service.ExecuteAsync( request );
@@ -41,6 +41,19 @@ public sealed class FreteController : ControllerBase
     )
     {
         var frete = await service.GetByIdAsync( id );
+
+        if (frete is null)
+            return NotFound();
+
+        return Ok( frete );
+    }
+    [HttpGet( "{codigo}" )]
+    public async Task<ActionResult<DetalhesFreteResponse>> ConsultarPorCodigo (
+        [FromServices] IConsultarFrete service ,
+        string codigo
+    )
+    {
+        var frete = await service.GetByCodigoAsync( codigo );
 
         if (frete is null)
             return NotFound();
@@ -129,7 +142,7 @@ public sealed class FreteController : ControllerBase
     public async Task<ActionResult<Result>> AdicionarEntrega (
         [FromServices] IAdicionarEntregaFrete service ,
         string codigo ,
-        [FromBody] CreateEntregaFreteRequest request
+        [FromQuery] CreateEntregaFreteRequest request
     )
     {
         var result = await service.Execute( codigo , request );
