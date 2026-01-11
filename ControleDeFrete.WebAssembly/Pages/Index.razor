@@ -1,0 +1,158 @@
+@page "/"
+@layout MainLayout
+@inject FreteApi FreteApi
+
+<style>
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 1.5rem;
+        align-items: start;
+    }
+
+    @@media (max-width: 1000px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .side-panel {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 1rem;
+    }
+
+    .metric-big {
+        margin: 1.5rem 0;
+    }
+
+    .metric-big .value {
+        display: block;
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--accent);
+        letter-spacing: -2px;
+    }
+
+    .metric-big .label {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .metric-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-top: 1px solid #f3f4f6;
+    }
+    .metric-item strong { color: var(--ink); }
+    .metric-item span { color: var(--muted); font-size: 0.9rem; }
+    /* Wrapper removed for full width */
+</style>
+
+<div class="dashboard-grid">
+    <div>
+        <div class="hero">
+            <div class="hero__title">SGF Sistema de Gestão de Fretes</div>
+            <div class="hero__subtitle">Painel único para clientes, motoristas, veículos e fretes.</div>
+            <div class="hero__actions">
+                    <NavLink class="btn" href="fretes">Ir para fretes</NavLink>
+                    <NavLink class="btn ghost" href="clientes">Base de clientes</NavLink>
+                </div>
+            </div>
+
+            <section class="cards">
+                <article class="card">
+                    <header>
+                        <span class="card-title">Clientes</span>
+                        
+                    </header>
+                    <div class="card-body">
+                        <span>Cadastre remetentes e destinatários, controle documentos e status.</span>
+                        <NavLink class="link" href="clientes">Abrir clientes →</NavLink>
+                    </div>
+                </article>
+                <article class="card">
+                    <header>
+                        <span class="card-title">Motoristas</span>
+                        
+                    </header>
+                    <div class="card-body">
+                        <span>CNH, documentos e ativação/desativação em um painel dedicado.</span>
+                        <NavLink class="link" href="motoristas">Abrir motoristas →</NavLink>
+                    </div>
+                </article>
+                <article class="card">
+                    <header>
+                        <span class="card-title">Veículos</span>
+                        
+                    </header>
+                    <div class="card-body">
+                        <span>Placas, modelos e status de disponibilidade da frota.</span>
+                        <NavLink class="link" href="veiculos">Abrir veículos →</NavLink>
+                    </div>
+                </article>
+                <article class="card">
+                    <header>
+                        <span class="card-title">Fretes</span>
+                        
+                    </header>
+                    <div class="card-body">
+                        <span>Crie fretes, aloque motorista/veículo e acompanhe o ciclo completo.</span>
+                        <NavLink class="link" href="fretes">Abrir fretes →</NavLink>
+                    </div>
+                </article>
+            </section>
+        </div>
+
+        <aside class="side-panel">
+            <h3 class="card-title">Painel Diário</h3>
+            <p class="eyebrow" style="margin-top: 0.25rem;">@Today.ToString("dd 'de' MMMM")</p>
+            
+            <div class="metric-big">
+                <span class="value">@FretesHojeCount</span>
+                <span class="label">Fretes emitidos hoje</span>
+            </div>
+            
+            <div class="metric-list">
+                 <div class="metric-item">
+                     <span>Valor movimentado</span>
+                     <strong>@FretesHojeValor.ToString("C")</strong>
+                 </div>
+                 <div class="metric-item">
+                     <span>Faturamento</span>
+                     <strong>@FretesHojeFaturamento.ToString("C")</strong>
+                 </div>
+            </div>
+            
+            <div style="margin-top: 1.5rem">
+                <NavLink class="btn small outline" style="width: 100%" href="fretes">Ver todos os fretes</NavLink>
+            </div>
+        </aside>
+    </div>
+
+@code {
+    private int FretesHojeCount { get; set; }
+    private decimal FretesHojeValor { get; set; }
+    private decimal FretesHojeFaturamento { get; set; }
+    private DateOnly Today = DateOnly.FromDateTime(DateTime.Now);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var (data, err) = await FreteApi.GetAllAsync();
+        if (data is not null)
+        {
+            var hoje = data.Where(f => f.DataEmissao == Today).ToList();
+            FretesHojeCount = hoje.Count;
+            FretesHojeValor = hoje.Sum(f => f.ValorTotal);
+            FretesHojeFaturamento = hoje.Sum(f => f.Valor); // Valor do frete sem motorista? Or assuming Valor is revenue
+        }
+    }
+}

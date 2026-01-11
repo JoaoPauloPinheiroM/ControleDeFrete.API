@@ -27,7 +27,9 @@ public static class FreteMap
             MotoristaNome: "pendente" , // vai ser populado no handler
             VeiculoPlaca: "pendente" ,// vai ser populado no handler
             Origem: $"{frete.Origem.Cidade}-{frete.Origem.Estado}" ,
-            Destinos: destinosConcatenados
+            Destinos: destinosConcatenados,
+            Latitude: frete.Origem.Latitude,
+            Longitude: frete.Origem.Longitude
         );
     }
 }

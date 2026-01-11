@@ -15,5 +15,7 @@ public record DetalhesFreteResponse
     string MotoristaNome ,
     string VeiculoPlaca ,
     string Origem ,
-    string Destinos
+    string Destinos,
+    double? Latitude,
+    double? Longitude
 );

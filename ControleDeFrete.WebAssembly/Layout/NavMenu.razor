@@ -1,31 +1,35 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">ControleDeFrete.WebAssembly</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+﻿<div class="nav-branding">
+    <div class="brand-mark">SGF</div>
+    <div class="brand-copy">
+        <span class="brand-title">Sistema de Gestão de Fretes</span>
+        
     </div>
+    <button title="Navigation menu" class="nav-toggle" @onclick="ToggleNavMenu">
+        ☰
+    </button>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
+<nav class="@NavMenuCssClass nav-shell">
+    <div class="nav-section">
+        <p class="nav-label">Operações</p>
+        <NavLink class="nav-link modern" href="" Match="NavLinkMatch.All">
+            <span>Início</span>
+        </NavLink>
+        <NavLink class="nav-link modern" href="clientes">
+            <span>Clientes</span>
+        </NavLink>
+        <NavLink class="nav-link modern" href="motoristas">
+            <span>Motoristas</span>
+        </NavLink>
+        <NavLink class="nav-link modern" href="veiculos">
+            <span>Veículos</span>
+        </NavLink>
+        <NavLink class="nav-link modern" href="fretes">
+            <span>Fretes</span>
+        </NavLink>
+    </div>
+
+</nav>
 
 @code {
     private bool collapseNavMenu = true;

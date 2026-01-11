@@ -1,20 +1,35 @@
 using ControleDeFrete.Infrastructure;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder( args );
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddCors( options =>
+{
+    options.AddPolicy( "AllowLocalWasm" , policy =>
+    {
+        policy
+            .WithOrigins(
+                "https://localhost:7142" ,
+                "http://localhost:5242" ,
+                "https://localhost:5001" ,
+                "http://localhost:5000" ,
+                "https://localhost:7246"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    } );
+} );
 
-// ConfiguraÁ„o do NSwag para gerar o documento OpenAPI (Swagger)
+// Configura√ß√£o do NSwag para gerar o documento OpenAPI (Swagger)
 builder.Services.AddOpenApiDocument( config =>
 {
     config.PostProcess = document =>
     {
         document.Info.Title = "Controle de Frete API";
         document.Info.Version = "v1";
-        document.Info.Description = "API respons·vel pelo controle de fretes, motoristas, veÌculos e clientes.";
+        document.Info.Description = "API respons√°vel pelo controle de fretes, motoristas, ve√≠culos e clientes.";
     };
 } );
 
@@ -62,9 +77,9 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    
+
     app.UseOpenApi();
-    
+
     app.UseSwaggerUi();
 }
 
@@ -72,6 +87,8 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseHttpsRedirection();
+
+app.UseCors( "AllowLocalWasm" );
 
 app.UseAuthorization();
 

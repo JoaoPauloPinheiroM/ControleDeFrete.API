@@ -1,0 +1,442 @@
+@page "/fretes/acoes/{Codigo}"
+@layout MainLayout
+@inject FreteApi FreteApi
+@inject NavigationManager Navigation
+
+<style>
+    .modal-backdrop {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .modal-actions {
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+    .status-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 1rem;
+        background: var(--surface-2);
+        border-radius: 6px;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="page-header">
+    <div>
+        <p class="eyebrow">Ações do frete</p>
+        <h1 class="page-title">@Codigo</h1>
+    </div>
+    <div class="header-actions">
+        <button class="btn ghost" @onclick="Voltar" type="button">Voltar</button>
+        <button class="btn" @onclick="Recarregar" disabled="@IsBusy" type="button">Recarregar</button>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="alert error">@Error</div>
+}
+@if (!string.IsNullOrWhiteSpace(Info))
+{
+    <div class="alert success">@Info</div>
+}
+
+@if (ShowDateModal)
+{
+    <div class="modal-backdrop" @onclick="CloseModal">
+        <div class="modal-content" @onclick:stopPropagation>
+            <h3>Selecione a Data</h3>
+            <div class="field">
+                <input type="date" @bind="SelectedDate" class="form-control" />
+            </div>
+            <div class="modal-actions">
+                <button class="btn ghost" @onclick="CloseModal" type="button">Cancelar</button>
+                <button class="btn" @onclick="ConfirmarDataAction" type="button">Confirmar</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (FreteSelecionado is null)
+{
+    <p class="muted-text">Carregando frete...</p>
+}
+else
+{
+    var state = GetState(FreteSelecionado.Codigo);
+    <div class="frete-acoes">
+        <section class="summary-grid">
+            <div class="summary-card">
+                <p class="label">Datas</p>
+                <div class="detail-line">Emissão: @FormatDate( FreteSelecionado.DataEmissao )</div>
+                <div class="detail-line">Carregamento: @FormatDate( FreteSelecionado.DataCarregamento )</div>
+                <div class="detail-line">Entrega: @FormatDate( FreteSelecionado.DataEntrega )</div>
+                <div class="detail-line">Pagamento: @FormatDate( FreteSelecionado.DataPagamento )</div>
+            </div>
+            <div class="summary-card">
+                <p class="label">Valores</p>
+                <div class="detail-line">Frete: @FormatMoney( FreteSelecionado.Valor )</div>
+                <div class="detail-line">Descarga: @FormatMoney( FreteSelecionado.Descarga )</div>
+                <div class="detail-line">Motorista: @FormatMoney( FreteSelecionado.PagoMotorista )</div>
+                <div class="detail-line strong">Total: @FormatMoney( FreteSelecionado.ValorTotal )</div>
+            </div>
+            <div class="summary-card">
+                <p class="label">Pessoas e veículo</p>
+                <div class="detail-line">Motorista: @(string.IsNullOrWhiteSpace(FreteSelecionado.MotoristaNome) ? "-" : FreteSelecionado.MotoristaNome)</div>
+                <div class="detail-line">Veículo: @(string.IsNullOrWhiteSpace(FreteSelecionado.VeiculoPlaca) ? "-" : FreteSelecionado.VeiculoPlaca)</div>
+            </div>
+            <div class="summary-card">
+                <p class="label">Localização (Origem)</p>
+                <div class="detail-line">Origem: @FreteSelecionado.Origem</div>
+                <div class="detail-line">Lat: @FreteSelecionado.Latitude</div>
+                <div class="detail-line">Long: @FreteSelecionado.Longitude</div>
+            </div>
+        </section>
+
+        <!-- Nova barra de status/ações visuais -->
+        <div class="status-actions">
+            <span class="eyebrow" style="margin-right: auto; margin-bottom:0;">Ciclo do Frete (@FreteSelecionado.Status)</span>
+            
+            @if (IsStatus(FreteSelecionado.Status, "Pendente"))
+            {
+                <button class="btn" @onclick="PrepareIniciarTransito" disabled="@IsBusy" type="button">Iniciar Trânsito</button>
+                <button class="btn outline" @onclick="() => Cancelar(FreteSelecionado.Codigo)" disabled="@IsBusy" type="button">Cancelar Frete</button>
+            }
+            
+            @if (IsStatus(FreteSelecionado.Status, "EmTransito") || IsStatus(FreteSelecionado.Status, "Cancelado"))
+            {
+                <button class="btn ghost" @onclick="() => Reabrir(FreteSelecionado.Codigo)" disabled="@IsBusy" type="button">Reabrir Frete</button>
+            }
+            
+            @if (IsStatus(FreteSelecionado.Status, "Finalizado"))
+            {
+                <button class="btn ok" @onclick="PrepareRegistrarPagamento" disabled="@IsBusy" type="button">Registrar Pagamento</button>
+            }
+        </div>
+
+        <section class="actions-grid">
+            <div class="action-card">
+                <header>
+                    <div>
+                        <p class="eyebrow">Operações</p>
+                        <h3 class="card-title">Alocações</h3>
+                    </div>
+                </header>
+                <div class="action-block">
+                    <div class="block-title">Motorista e Veículo</div>
+                    <div class="inline-inputs">
+                        <label class="field inline">
+                            <span>Documento motorista</span>
+                            <input type="text" @bind-value="state.DocumentoMotorista" placeholder="CPF/CNPJ" />
+                        </label>
+                        <button class="btn small" @onclick="() => AlocarMotorista(FreteSelecionado.Codigo, state.DocumentoMotorista)" disabled="@IsBusy" type="button">Alocar</button>
+                    </div>
+                    <div class="inline-inputs">
+                        <label class="field inline">
+                            <span>Placa veículo</span>
+                            <input type="text" @bind-value="state.Placa" placeholder="ABC1234" />
+                        </label>
+                        <button class="btn small" @onclick="() => AlocarVeiculo(FreteSelecionado.Codigo, state.Placa)" disabled="@IsBusy" type="button">Alocar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-card">
+                <header>
+                    <div>
+                        <p class="eyebrow">Entregas</p>
+                        <h3 class="card-title">Gerenciar</h3>
+                    </div>
+                </header>
+                
+                <div class="action-block">
+                    <div class="block-title">Ações Rápidas</div>
+                    <div class="inline-inputs">
+                        <label class="field inline short">
+                            <span>Sequência</span>
+                            <input type="number" @bind-value="state.SequenciaAcao" placeholder="Nº" />
+                        </label>
+                        <button class="btn outline small" @onclick="() => PrepareFinalizarEntrega(state.SequenciaAcao)" disabled="@IsBusy" title="Marcar como entregue" type="button">
+                            Entregue
+                        </button>
+                        <button class="btn ghost small" @onclick="() => RemoverEntrega(FreteSelecionado.Codigo, state.SequenciaAcao)" disabled="@IsBusy" title="Remover entrega" type="button">
+                            Remover
+                        </button>
+                    </div>
+                </div>
+
+                <div class="action-block">
+                    <div class="block-title">Nova entrega</div>
+                    <div class="inline-inputs">
+                        <label class="field inline">
+                            <span>Doc. Cliente</span>
+                            <input type="text" @bind-value="state.NovaEntrega.DocumentoCliente" />
+                        </label>
+                        <label class="field inline">
+                            <span>Cidade/UF</span>
+                            <input type="text" @bind-value="state.NovaEntrega.Cidade" placeholder="Cidade" />
+                        </label>
+                         <label class="field inline short">
+                            <span>UF</span>
+                            <input type="text" @bind-value="state.NovaEntrega.Estado" placeholder="UF" />
+                        </label>
+                    </div>
+                    <div class="inline-inputs">
+                         <label class="field inline">
+                            <span>Logradouro</span>
+                            <input type="text" @bind-value="state.NovaEntrega.Logradouro" />
+                        </label>
+                    </div>
+                    <div class="inline-inputs">
+                         <label class="field inline">
+                            <span>Latitude</span>
+                            <input type="number" step="any" @bind-value="state.NovaEntrega.Latitude" />
+                        </label>
+                        <label class="field inline">
+                            <span>Longitude</span>
+                            <input type="number" step="any" @bind-value="state.NovaEntrega.Longitude" />
+                        </label>
+                        <button class="btn small" @onclick="() => AdicionarEntrega(FreteSelecionado.Codigo, state.NovaEntrega)" disabled="@IsBusy" type="button">Adicionar</button>
+                    </div>
+                </div>
+
+                <div class="action-block muted">
+                    <div class="block-title">Zona de perigo</div>
+                    <button class="btn ghost small" @onclick="() => ExcluirFrete(FreteSelecionado.Codigo)" disabled="@IsBusy" type="button">Excluir frete</button>
+                </div>
+            </div>
+        </section>
+    </div>
+}
+
+@code {
+    [Parameter] public string Codigo { get; set; } = string.Empty;
+    private FreteResponse? FreteSelecionado { get; set; }
+    private Dictionary<string, FreteActionState> ActionState { get; } = new();
+    private bool IsBusy { get; set; }
+    private string? Error { get; set; }
+    private string? Info { get; set; }
+
+    // Modal State
+    private bool ShowDateModal { get; set; }
+    private DateOnly SelectedDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+    private string PendingAction { get; set; } = string.Empty;
+    private int PendingSequencia { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarFrete();
+    }
+
+    private void PrepareIniciarTransito()
+    {
+        PendingAction = "IniciarTransito";
+        SelectedDate = DateOnly.FromDateTime(DateTime.Now);
+        ShowDateModal = true;
+    }
+
+    private void PrepareRegistrarPagamento()
+    {
+        PendingAction = "RegistrarPagamento";
+        SelectedDate = DateOnly.FromDateTime(DateTime.Now);
+        ShowDateModal = true;
+    }
+
+    private void PrepareFinalizarEntrega(int sequencia)
+    {
+        if (sequencia <= 0) 
+        {
+            Error = "Informe a sequência da entrega.";
+            return;
+        }
+        PendingAction = "FinalizarEntrega";
+        PendingSequencia = sequencia;
+        SelectedDate = DateOnly.FromDateTime(DateTime.Now);
+        ShowDateModal = true;
+    }
+
+    private void CloseModal()
+    {
+        ShowDateModal = false;
+        PendingAction = string.Empty;
+    }
+
+    private async Task ConfirmarDataAction()
+    {
+        ShowDateModal = false;
+        switch (PendingAction)
+        {
+            case "IniciarTransito":
+                await IniciarTransito(FreteSelecionado!.Codigo, SelectedDate);
+                break;
+            case "RegistrarPagamento":
+                await RegistrarPagamento(FreteSelecionado!.Codigo, SelectedDate);
+                break;
+            case "FinalizarEntrega":
+                await FinalizarEntrega(FreteSelecionado!.Codigo, new EntregaFinalizeRequest { Sequencia = PendingSequencia, DataEntrega = SelectedDate });
+                break;
+        }
+    }
+
+    private bool IsStatus(string current, string expected)
+    {
+        return string.Equals(current, expected, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private async Task CarregarFrete()
+    {
+        IsBusy = true;
+        Error = null;
+        Info = null;
+        var (data, err) = await FreteApi.GetAllAsync();
+        if (err is not null)
+        {
+            Error = err;
+        }
+        else if (data is not null)
+        {
+            FreteSelecionado = data.FirstOrDefault(f => f.Codigo.Equals(Codigo, StringComparison.OrdinalIgnoreCase));
+            if (FreteSelecionado is null)
+            {
+                Error = "Frete não encontrado.";
+            }
+        }
+        IsBusy = false;
+    }
+
+    private void Voltar()
+    {
+        Navigation.NavigateTo("/fretes");
+    }
+
+    private async Task Recarregar()
+    {
+        await CarregarFrete();
+    }
+
+    private FreteActionState GetState(string codigo)
+    {
+        if (!ActionState.TryGetValue(codigo, out var state))
+        {
+            state = new FreteActionState();
+            ActionState[codigo] = state;
+        }
+        return state;
+    }
+
+    private async Task AlocarMotorista(string codigo, string documento)
+    {
+        if (string.IsNullOrWhiteSpace(documento)) { Error = "Informe o documento do motorista."; return; }
+        IsBusy = true; Error = null; Info = null;
+        var err = await FreteApi.AssignMotoristaAsync(codigo, documento);
+        if (err is not null) Error = err; else { Info = "Motorista alocado."; await CarregarFrete(); }
+        IsBusy = false;
+    }
+
+    private async Task AlocarVeiculo(string codigo, string placa)
+    {
+        if (string.IsNullOrWhiteSpace(placa)) { Error = "Informe a placa."; return; }
+        IsBusy = true; Error = null; Info = null;
+        var err = await FreteApi.AssignVeiculoAsync(codigo, placa);
+        if (err is not null) Error = err; else { Info = "Veículo alocado."; await CarregarFrete(); }
+        IsBusy = false;
+    }
+
+    private async Task IniciarTransito(string codigo, DateOnly data)
+    {
+        IsBusy = true; Error = null; Info = null;
+        var err = await FreteApi.StartTransitAsync(codigo, data);
+        if (err is not null) Error = err; else { Info = "Trânsito iniciado."; await CarregarFrete(); }
+        IsBusy = false;
+    }
+
+    private async Task RegistrarPagamento(string codigo, DateOnly dataPagamento)
+    {
+        IsBusy = true; Error = null; Info = null;
+        var err = await FreteApi.RegisterPaymentAsync(codigo, dataPagamento);
+        if (err is not null) Error = err; else { Info = "Pagamento registrado."; await CarregarFrete(); }
+        IsBusy = false;
+    }
+
+    private async Task Cancelar(string codigo)
+    {
+        IsBusy = true; Error = null; Info = null;
+        var err = await FreteApi.CancelAsync(codigo);
+        if (err is not null) Error = err; else { Info = "Frete cancelado."; await CarregarFrete(); }
+        IsBusy = false;
+    }
+
+    private async Task Reabrir(string codigo)
+    {
+        IsBusy = true; Error = null; Info = null;
+        var err = await FreteApi.ReopenAsync(codigo);
+        if (err is not null) Error = err; else { Info = "Frete reaberto."; await CarregarFrete(); }
+        IsBusy = false;
+    }
+
+    private async Task AdicionarEntrega(string codigo, EntregaCreate entrega)
+    {
+        if (string.IsNullOrWhiteSpace(entrega.DocumentoCliente) || string.IsNullOrWhiteSpace(entrega.Logradouro))
+        { Error = "Preencha documento e logradouro."; return; }
+        IsBusy = true; Error = null; Info = null;
+        var err = await FreteApi.AddEntregaAsync(codigo, entrega);
+        if (err is not null) Error = err; else { Info = "Entrega adicionada."; GetState(codigo).NovaEntrega = new(); await CarregarFrete(); }
+        IsBusy = false;
+    }
+
+    private async Task FinalizarEntrega(string codigo, EntregaFinalizeRequest request)
+    {
+        if (request.Sequencia <= 0) { Error = "Informe a sequência."; return; }
+        IsBusy = true; Error = null; Info = null;
+        var err = await FreteApi.FinalizarEntregaAsync(codigo, request);
+        if (err is not null) Error = err; else { Info = "Entrega finalizada."; GetState(codigo).FinalizarEntrega = new(); await CarregarFrete(); }
+        IsBusy = false;
+    }
+
+    private async Task RemoverEntrega(string codigo, int sequencia)
+    {
+        if (sequencia <= 0) { Error = "Informe a sequência."; return; }
+        IsBusy = true; Error = null; Info = null;
+        var err = await FreteApi.RemoverEntregaAsync(codigo, sequencia);
+        if (err is not null) Error = err; else { Info = "Entrega removida."; GetState(codigo).SequenciaAcao = 0; await CarregarFrete(); }
+        IsBusy = false;
+    }
+
+    private async Task ExcluirFrete(string codigo)
+    {
+        IsBusy = true; Error = null; Info = null;
+        var err = await FreteApi.DeleteAsync(codigo);
+        if (err is not null) Error = err; else { Info = "Frete excluído."; await CarregarFrete(); }
+        IsBusy = false;
+    }
+
+    private static string FormatDate(DateOnly? date) => date.HasValue ? date.Value.ToString("dd/MM/yyyy") : "-";
+    private static string FormatMoney(decimal value) => value.ToString("C");
+
+    private sealed class FreteActionState
+    {
+        public string DocumentoMotorista { get; set; } = string.Empty;
+        public string Placa { get; set; } = string.Empty;
+        public EntregaCreate NovaEntrega { get; set; } = new();
+        public EntregaFinalizeRequest FinalizarEntrega { get; set; } = new();
+        public int SequenciaAcao { get; set; }
+    }
+}
