@@ -1,0 +1,282 @@
+@page "/veiculos"
+@layout MainLayout
+@inject VeiculoApi VeiculoApi
+
+<div class="page-header">
+    <div>
+        <p class="eyebrow">Frota</p>
+        <h1 class="page-title">Veículos</h1>
+    </div>
+    <div class="header-actions">
+        <button class="btn ghost" @onclick="LoadVeiculos" disabled="@IsBusy">Recarregar</button>
+        <button class="btn" @onclick="ToggleNovoVeiculo">@((ShowNovoVeiculo ? "Fechar" : "Novo veículo"))</button>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace( Error ))
+{
+    <div class="alert error">@Error</div>
+}
+@if (!string.IsNullOrWhiteSpace( Info ))
+{
+    <div class="alert success">@Info</div>
+}
+
+<div class="metrics-grid">
+    <div class="metric-card">
+        <div class="metric-label">Total</div>
+        <div class="metric-value">@VeiculosList.Count</div>
+        <div class="metric-note">Veículos cadastrados</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Ativos</div>
+        <div class="metric-value">@TotalAtivos</div>
+        <div class="metric-note">Disponíveis para uso</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Inativos</div>
+        <div class="metric-value">@TotalInativos</div>
+        <div class="metric-note">Manutenção/fora de rota</div>
+    </div>
+</div>
+
+@if (ShowNovoVeiculo)
+{
+    <section class="panel">
+        <header>Novo veículo</header>
+        <EditForm Model="NewVeiculo" OnValidSubmit="CreateVeiculo">
+            <DataAnnotationsValidator />
+            <div class="form-grid labeled">
+                <label class="field">
+                    <span>Placa</span>
+                    <InputText @bind-Value="NewVeiculo.Placa" placeholder="Placa" />
+                </label>
+                <label class="field">
+                    <span>Modelo</span>
+                    <InputText @bind-Value="NewVeiculo.Modelo" placeholder="Modelo" />
+                </label>
+                <label class="field">
+                    <span>Marca</span>
+                    <InputText @bind-Value="NewVeiculo.Marca" placeholder="Marca" />
+                </label>
+                <label class="field">
+                    <span>Ano</span>
+                    <InputNumber @bind-Value="NewVeiculo.AnoFabricacao" />
+                </label>
+            </div>
+            <div class="toolbar">
+                <button class="btn" type="submit" disabled="@IsBusy">Salvar veículo</button>
+                <button class="btn ghost" type="button" @onclick="ToggleNovoVeiculo">Cancelar</button>
+            </div>
+        </EditForm>
+    </section>
+}
+
+<section class="panel">
+    <header>Veículos</header>
+    <div class="filters">
+        <InputText @bind-Value="SearchTerm" placeholder="Buscar por placa, modelo ou marca" />
+        <InputSelect @bind-Value="StatusFilter">
+            <option value="all">Todos</option>
+            <option value="active">Ativos</option>
+            <option value="inactive">Inativos</option>
+        </InputSelect>
+    </div>
+    @if (!FilteredVeiculos.Any())
+    {
+        <p class="muted-text">Nenhum veículo encontrado para o filtro.</p>
+    }
+    else
+    {
+        <div class="table-wrapper">
+            <table class="data-table modern">
+                <thead>
+                    <tr>
+                        <th>Placa</th>
+                        <th>Modelo</th>
+                        <th>Marca</th>
+                        <th>Ano</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var veiculo in FilteredVeiculos)
+                    {
+                        <tr>
+                            <td class="strong">@veiculo.Placa</td>
+                            <td>@veiculo.Modelo</td>
+                            <td>@veiculo.Marca</td>
+                            <td>@veiculo.AnoFabricacao</td>
+                            <td>
+                                <span class="status-chip @(veiculo.Ativo ? "ok" : "warn")">@(veiculo.Ativo ? "Ativo" : "Inativo")</span>
+                            </td>
+                            <td class="actions inline-buttons">
+                                <button class="btn small" @onclick="() => StartEdit(veiculo.Placa)">Editar</button>
+                                <button class="btn outline small" @onclick="() => ToggleStatus(veiculo.Placa)" disabled="@IsBusy">
+                                    @(veiculo.Ativo ? "Inativar" : "Ativar")
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
+
+@if (!string.IsNullOrWhiteSpace( PlacaEditando ))
+{
+    <section class="panel muted">
+        <header>Editar veículo (@PlacaEditando)</header>
+        <EditForm Model="EditVeiculo" OnValidSubmit="SalvarEdicao">
+            <div class="form-grid">
+                <InputText @bind-Value="EditVeiculo.Modelo" placeholder="Modelo" />
+                <InputText @bind-Value="EditVeiculo.Marca" placeholder="Marca" />
+                <InputNumber @bind-Value="EditVeiculo.AnoDeFabricacao" />
+                <InputText @bind-Value="EditVeiculo.NovoPlaca" placeholder="Nova placa" />
+            </div>
+            <div class="toolbar">
+                <button class="btn" type="submit" disabled="@IsBusy">Salvar</button>
+                <button class="btn ghost" type="button" @onclick="CancelarEdicao">Cancelar</button>
+            </div>
+        </EditForm>
+    </section>
+}
+
+@code {
+    private List<VeiculoResponse> VeiculosList { get; set; } = new();
+    private VeiculoCreate NewVeiculo { get; set; } = new();
+    private VeiculoUpdate EditVeiculo { get; set; } = new();
+    private string? PlacaEditando { get; set; }
+    private bool IsBusy { get; set; }
+    private string? Error { get; set; }
+    private string? Info { get; set; }
+    private string SearchTerm { get; set; } = string.Empty;
+    private string StatusFilter { get; set; } = "all";
+    private bool ShowNovoVeiculo { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadVeiculos();
+    }
+    
+    private void ToggleNovoVeiculo()
+    {
+        ShowNovoVeiculo = !ShowNovoVeiculo;
+        if (!ShowNovoVeiculo) NewVeiculo = new();
+    }
+
+    private async Task LoadVeiculos()
+    {
+        IsBusy = true;
+        Error = null;
+        Info = null;
+
+        var (data, err) = await VeiculoApi.GetAllAsync();
+        if (err is not null)
+        {
+            Error = err;
+        }
+        else if (data is not null)
+        {
+            VeiculosList = data.OrderBy( v => v.Placa ).ToList();
+        }
+
+        IsBusy = false;
+    }
+
+    private IEnumerable<VeiculoResponse> FilteredVeiculos => VeiculosList
+        .Where( v => string.IsNullOrWhiteSpace( SearchTerm ) ||
+                     v.Placa.Contains( SearchTerm , StringComparison.OrdinalIgnoreCase ) ||
+                     v.Modelo.Contains( SearchTerm , StringComparison.OrdinalIgnoreCase ) ||
+                     v.Marca.Contains( SearchTerm , StringComparison.OrdinalIgnoreCase ) )
+        .Where( v => StatusFilter switch
+        {
+            "active" => v.Ativo,
+            "inactive" => !v.Ativo,
+            _ => true
+        } );
+
+    private int TotalAtivos => VeiculosList.Count( v => v.Ativo );
+    private int TotalInativos => VeiculosList.Count( v => !v.Ativo );
+
+    private async Task CreateVeiculo()
+    {
+        IsBusy = true;
+        Error = null;
+        Info = null;
+
+        var err = await VeiculoApi.CreateAsync( NewVeiculo );
+        if (err is not null)
+        {
+            Error = err;
+        }
+        else
+        {
+            Info = "Veículo criado.";
+            NewVeiculo = new();
+            await LoadVeiculos();
+        }
+
+        IsBusy = false;
+    }
+
+    private void StartEdit( string placa )
+    {
+        PlacaEditando = placa;
+        EditVeiculo = new();
+        Info = null;
+        Error = null;
+    }
+
+    private async Task SalvarEdicao()
+    {
+        if (string.IsNullOrWhiteSpace( PlacaEditando )) return;
+
+        IsBusy = true;
+        Error = null;
+        Info = null;
+
+        var err = await VeiculoApi.EditAsync( PlacaEditando , EditVeiculo );
+        if (err is not null)
+        {
+            Error = err;
+        }
+        else
+        {
+            Info = "Veículo atualizado.";
+            PlacaEditando = null;
+            EditVeiculo = new();
+            await LoadVeiculos();
+        }
+
+        IsBusy = false;
+    }
+
+    private async Task ToggleStatus( string placa )
+    {
+        IsBusy = true;
+        Error = null;
+        Info = null;
+
+        var err = await VeiculoApi.ToggleStatusAsync( placa );
+        if (err is not null)
+        {
+            Error = err;
+        }
+        else
+        {
+            Info = "Status atualizado.";
+            await LoadVeiculos();
+        }
+
+        IsBusy = false;
+    }
+
+    private void CancelarEdicao()
+    {
+        PlacaEditando = null;
+        EditVeiculo = new();
+    }
+}

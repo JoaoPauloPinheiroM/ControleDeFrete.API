@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -7,10 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Infrastructure\Data\Configurations\NovaPasta\**" />
-    <Content Remove="Infrastructure\Data\Configurations\NovaPasta\**" />
-    <EmbeddedResource Remove="Infrastructure\Data\Configurations\NovaPasta\**" />
-    <None Remove="Infrastructure\Data\Configurations\NovaPasta\**" />
+    <Compile Remove="Controllers\ClienteEndpoints\**" />
+    <Compile Remove="Controllers\MotoristaEndpoints\**" />
+    <Compile Remove="Controllers\VeiculoEndpoints\**" />
+    <Compile Remove="Infrastructure\**" />
+    <Content Remove="Controllers\ClienteEndpoints\**" />
+    <Content Remove="Controllers\MotoristaEndpoints\**" />
+    <Content Remove="Controllers\VeiculoEndpoints\**" />
+    <Content Remove="Infrastructure\**" />
+    <EmbeddedResource Remove="Controllers\ClienteEndpoints\**" />
+    <EmbeddedResource Remove="Controllers\MotoristaEndpoints\**" />
+    <EmbeddedResource Remove="Controllers\VeiculoEndpoints\**" />
+    <EmbeddedResource Remove="Infrastructure\**" />
+    <None Remove="Controllers\ClienteEndpoints\**" />
+    <None Remove="Controllers\MotoristaEndpoints\**" />
+    <None Remove="Controllers\VeiculoEndpoints\**" />
+    <None Remove="Infrastructure\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,11 +36,14 @@
     </PackageReference>
     
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.1" />
+    
+    <PackageReference Include="Scrutor" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Services\Read\" />
-    <Folder Include="Infrastructure\Services\" />
+    <ProjectReference Include="..\ControleDeFrete.Application\ControleDeFrete.Application.csproj" />
+    <ProjectReference Include="..\ControleDeFrete.Domain\ControleDeFrete.Domain.csproj" />
+    <ProjectReference Include="..\ControleDeFrete.Infrastructure\ControleDeFrete.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

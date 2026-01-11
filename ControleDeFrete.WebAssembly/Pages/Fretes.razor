@@ -1,0 +1,258 @@
+@page "/fretes"
+@layout MainLayout
+@inject FreteApi FreteApi
+@inject NavigationManager Nav
+
+<div class="page-header">
+    <div>
+        <p class="eyebrow">Visão consolidada</p>
+        <h1 class="page-title">Gestão de Fretes</h1>
+    </div>
+    <div class="header-actions">
+        <button class="btn ghost" @onclick="LoadFretes" disabled="@IsBusy">Recarregar</button>
+        <button class="btn" @onclick="ToggleNovoFrete">@((ShowNovoFrete ? "Fechar" : "Novo frete"))</button>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace( Error ))
+{
+    <div class="alert error">@Error</div>
+}
+@if (!string.IsNullOrWhiteSpace( Info ))
+{
+    <div class="alert success">@Info</div>
+}
+
+<div class="metrics-grid">
+    <div class="metric-card">
+        <div class="metric-label">Fretes ativos</div>
+        <div class="metric-value">@FretesList.Count</div>
+        <div class="metric-note">@EmTransitoCount em trânsito</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Total negociado</div>
+        <div class="metric-value">@FormatMoney( TotalGeral )</div>
+        <div class="metric-note">Inclui frete + descarga</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Pagamentos pendentes</div>
+        <div class="metric-value">@FormatMoney( PendentesPagamento )</div>
+        <div class="metric-note">Fretes sem data de pagamento</div>
+    </div>
+</div>
+
+@if (ShowNovoFrete)
+{
+    <section class="panel">
+        <header>Novo frete</header>
+        <EditForm Model="NewFrete" OnValidSubmit="CreateFrete">
+            <DataAnnotationsValidator />
+            <div class="form-grid labeled">
+                <label class="field">
+                    <span>Código</span>
+                    <InputText @bind-Value="NewFrete.Codigo" placeholder="Ex: FR0003" />
+                </label>
+                <label class="field">
+                    <span>Documento do cliente</span>
+                    <InputText @bind-Value="NewFrete.DocumentoCliente" placeholder="CPF/CNPJ" />
+                </label>
+                <label class="field">
+                    <span>Valor do frete</span>
+                    <InputNumber @bind-Value="NewFrete.ValorFrete" />
+                </label>
+                <label class="field">
+                    <span>Valor descarga</span>
+                    <InputNumber @bind-Value="NewFrete.ValorDescarga" />
+                </label>
+                <label class="field">
+                    <span>Pago ao motorista</span>
+                    <InputNumber @bind-Value="NewFrete.ValorPagoMotorista" />
+                </label>
+                <label class="field">
+                    <span>Logradouro origem</span>
+                    <InputText @bind-Value="NewFrete.Logadouro" placeholder="Rua/Avenida" />
+                </label>
+                <label class="field">
+                    <span>Cidade origem</span>
+                    <InputText @bind-Value="NewFrete.Cidade" placeholder="Cidade" />
+                </label>
+                <label class="field">
+                    <span>UF</span>
+                    <InputText @bind-Value="NewFrete.Estado" placeholder="UF" />
+                </label>
+                <label class="field">
+                    <span>Latitude</span>
+                    <InputNumber @bind-Value="NewFrete.Latitude" />
+                </label>
+                <label class="field">
+                    <span>Longitude</span>
+                    <InputNumber @bind-Value="NewFrete.Longitude" />
+                </label>
+            </div>
+            <div class="toolbar">
+                <button class="btn" type="submit" disabled="@IsBusy">Criar frete</button>
+                <button class="btn ghost" type="button" @onclick="ToggleNovoFrete">Cancelar</button>
+            </div>
+        </EditForm>
+    </section>
+}
+
+<section class="panel">
+    <header>Fretes</header>
+    <div class="filters">
+        <InputText @bind-Value="SearchTerm" placeholder="Buscar por código, placa, motorista ou destino" />
+        <InputSelect @bind-Value="StatusFilter">
+            <option value="all">Todos os status</option>
+            <option value="Pendente">Pendente</option>
+            <option value="EmTransito">Em trânsito</option>
+            <option value="Finalizado">Finalizado</option>
+            <option value="Pago">Pago</option>
+            <option value="Cancelado">Cancelado</option>
+        </InputSelect>
+    </div>
+
+    @if (!FilteredFretes.Any())
+    {
+        <div class="empty-state">Nenhum frete encontrado para o filtro atual.</div>
+    }
+    else
+    {
+        <div class="table-wrapper">
+            <table class="data-table modern">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Origem</th>
+                        <th>Destino(s)</th>
+                        <th>Motorista</th>
+                        <th>Veículo</th>
+                        <th>Status</th>
+                        <th>Emissão</th>
+                        <th>Total</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var frete in FilteredFretes)
+                    {
+                        <tr class="clickable" @onclick="() => AbrirAcoes(frete.Codigo)">
+                            <td class="strong">@frete.Codigo</td>
+                            <td>@frete.Origem</td>
+                            <td>@frete.Destinos</td>
+                            <td>@(string.IsNullOrWhiteSpace(frete.MotoristaNome) ? "-" : frete.MotoristaNome)</td>
+                            <td>@(string.IsNullOrWhiteSpace(frete.VeiculoPlaca) ? "-" : frete.VeiculoPlaca)</td>
+                            <td>
+                                <span class="status-chip @StatusClass(frete.Status)">@frete.Status</span>
+                            </td>
+                            <td>@FormatDate( frete.DataEmissao )</td>
+                            <td>@FormatMoney( frete.ValorTotal )</td>
+                            <td><button class="btn ghost small" type="button" @onclick="() => AbrirAcoes(frete.Codigo)" @onclick:stopPropagation>Ações</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
+
+@code {
+    private List<FreteResponse> FretesList { get; set; } = new();
+    private FreteCreate NewFrete { get; set; } = new();
+    private bool IsBusy { get; set; }
+    private string? Error { get; set; }
+    private string? Info { get; set; }
+    private string SearchTerm { get; set; } = string.Empty;
+    private string StatusFilter { get; set; } = "all";
+    private bool ShowNovoFrete { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFretes();
+    }
+
+    private async Task LoadFretes()
+    {
+        IsBusy = true;
+        Error = null;
+        Info = null;
+
+        var (data, err) = await FreteApi.GetAllAsync();
+        if (err is not null)
+        {
+            Error = err;
+        }
+        else if (data is not null)
+        {
+            FretesList = data.OrderByDescending( f => f.DataEmissao ).ToList();
+        }
+
+        IsBusy = false;
+    }
+
+    private IEnumerable<FreteResponse> FilteredFretes
+        => FretesList
+            .Where( f =>
+                string.IsNullOrWhiteSpace( SearchTerm ) ||
+                f.Codigo.Contains( SearchTerm , StringComparison.OrdinalIgnoreCase ) ||
+                f.Destinos.Contains( SearchTerm , StringComparison.OrdinalIgnoreCase ) ||
+                (!string.IsNullOrWhiteSpace( f.MotoristaNome ) && f.MotoristaNome.Contains( SearchTerm , StringComparison.OrdinalIgnoreCase )) ||
+                (!string.IsNullOrWhiteSpace( f.VeiculoPlaca ) && f.VeiculoPlaca.Contains( SearchTerm , StringComparison.OrdinalIgnoreCase )) ||
+                f.Origem.Contains( SearchTerm , StringComparison.OrdinalIgnoreCase )
+            )
+            .Where( f => StatusFilter == "all" || f.Status.Equals( StatusFilter , StringComparison.OrdinalIgnoreCase ) );
+
+    private async Task CreateFrete()
+    {
+        IsBusy = true;
+        Error = null;
+        Info = null;
+
+        var err = await FreteApi.CreateAsync( NewFrete );
+        if (err is not null)
+        {
+            Error = err;
+        }
+        else
+        {
+            Info = "Frete criado.";
+            NewFrete = new();
+            await LoadFretes();
+        }
+
+        IsBusy = false;
+    }
+
+    private void AbrirAcoes( string codigo )
+    {
+        Nav.NavigateTo($"/fretes/acoes/{codigo}");
+    }
+
+    private void ToggleNovoFrete()
+    {
+        ShowNovoFrete = !ShowNovoFrete;
+    }
+
+    private int EmTransitoCount => FretesList.Count( f => f.Status.Equals( "EmTransito" , StringComparison.OrdinalIgnoreCase ) );
+
+    private decimal TotalGeral => FretesList.Sum( f => f.ValorTotal );
+
+    private decimal PendentesPagamento => FretesList
+        .Where( f => !f.Status.Equals( "Pago" , StringComparison.OrdinalIgnoreCase ) )
+        .Sum( f => f.ValorTotal );
+
+    private static string FormatDate( DateOnly? date )
+        => date.HasValue ? date.Value.ToString( "dd/MM/yyyy" ) : "-";
+
+    private static string FormatMoney( decimal value )
+        => value.ToString( "C" );
+
+    private static string StatusClass( string status ) => status.ToLowerInvariant() switch
+    {
+        "pendente" => "warn",
+        "emtransito" => "info",
+        "finalizado" => "ok",
+        "pago" => "ok",
+        "cancelado" => "muted",
+        _ => "muted"
+    };
+}

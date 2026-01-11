@@ -1,0 +1,43 @@
+﻿<div class="nav-branding">
+    <div class="brand-mark">SGF</div>
+    <div class="brand-copy">
+        <span class="brand-title">Sistema de Gestão de Fretes</span>
+        
+    </div>
+    <button title="Navigation menu" class="nav-toggle" @onclick="ToggleNavMenu">
+        ☰
+    </button>
+</div>
+
+<nav class="@NavMenuCssClass nav-shell">
+    <div class="nav-section">
+        <p class="nav-label">Operações</p>
+        <NavLink class="nav-link modern" href="" Match="NavLinkMatch.All">
+            <span>Início</span>
+        </NavLink>
+        <NavLink class="nav-link modern" href="clientes">
+            <span>Clientes</span>
+        </NavLink>
+        <NavLink class="nav-link modern" href="motoristas">
+            <span>Motoristas</span>
+        </NavLink>
+        <NavLink class="nav-link modern" href="veiculos">
+            <span>Veículos</span>
+        </NavLink>
+        <NavLink class="nav-link modern" href="fretes">
+            <span>Fretes</span>
+        </NavLink>
+    </div>
+
+</nav>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

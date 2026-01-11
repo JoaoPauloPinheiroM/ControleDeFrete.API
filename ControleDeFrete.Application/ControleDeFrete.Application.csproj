@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="DTOS\**" />
+    <EmbeddedResource Remove="DTOS\**" />
+    <None Remove="DTOS\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Class1.cs" />
+    <Compile Remove="Common\DTOS\Responses\Fretes\DetalhesEntregaFreteResponse.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ControleDeFrete.Domain\ControleDeFrete.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
