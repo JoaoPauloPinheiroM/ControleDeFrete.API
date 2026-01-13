@@ -12,11 +12,4 @@
     <Project Path="ControleDeFrete.API/ControleDeFrete.API.csproj" />
     <Project Path="ControleDeFrete.WebAssembly/ControleDeFrete.WebAssembly.csproj" Id="96cb1694-7ce6-433d-8937-57fc17c3bf75" />
   </Folder>
-  <Folder Name="/Aquivos testes/">
-    <File Path="C:/Users/joao_paulo/Downloads/Demo CRM/Pages/Financeiro.razor" />
-    <File Path="C:/Users/joao_paulo/Downloads/Demo CRM/Pages/Fretes.razor" />
-    <File Path="C:/Users/joao_paulo/Downloads/Demo CRM/Pages/Home.razor" />
-    <File Path="C:/Users/joao_paulo/Downloads/Demo CRM/Pages/Motoristas.razor" />
-    <File Path="C:/Users/joao_paulo/Downloads/Demo CRM/Pages/Relatorios.razor" />
-  </Folder>
 </Solution>
