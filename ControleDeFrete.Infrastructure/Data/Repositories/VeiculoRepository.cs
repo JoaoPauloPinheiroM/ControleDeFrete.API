@@ -46,8 +46,6 @@ public class VeiculoRepository : IVeiculoRepository
     {
         return await _context.Fretes
             .AnyAsync( f => f.VeiculoId == veiculoId &&
-                       f.Status != Status.Cancelado &&
-                       f.Status != Status.Pago &&
-                       f.Status != Status.Finalizado );
+                       f.Status == Status.Pendente || f.Status == Satatus.EmTransito );
     }
 }
