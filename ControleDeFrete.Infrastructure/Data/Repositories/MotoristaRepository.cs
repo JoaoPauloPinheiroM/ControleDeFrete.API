@@ -42,8 +42,7 @@ public class MotoristaRepository : IMotoristaRepository
 
         return await _context.Fretes
             .AnyAsync( f => f.MotoristaId == motoristaId &&
-                       f.Status != Status.Cancelado &&
-                       f.Status != Status.Finalizado );
+                       f.Status == Status.Pendente || f.Status == Satatus.EmTransito );
     }
 
     public async  Task<IEnumerable<Motorista>> GetByStatusAsync ( bool status )
